@@ -166,8 +166,7 @@ Acceda al enlace que genera (generalmente [http://127.0.0.1:8000/](http://127.0.
    Ese comando hace lo siguiente:
    - Agregar el superusuario a la tabla miperfil, permitiéndole acceder a la plataforma.
    - Registrar las carreras de los alumnos.
-   - Asignar los cursos que enseñan los profesores."
-   Proporcione:
+   - Asignar los cursos que enseñan los profesores.
 
 2. **Confirmación en Django**  
    Ejecuta el servidor para verificar que ya no recibes el error 404:
