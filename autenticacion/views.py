@@ -9,8 +9,19 @@ from django.http import Http404
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from .models import *
 from .forms import *
@@ -76,6 +87,8 @@ def crear_cuenta(request):
         
         # Validar DNI con RENIEC
         is_valid, nombre_lista_reniec = validate_dni(form_data['dni'])
+        print(f'is_valid: {is_valid}')
+        print(f'nombre_lista_reniec: {nombre_lista_reniec}')
         if not is_valid:
             return render(request, 'crear_cuenta.html', {
                 'form': UserCreationForm(),
@@ -369,92 +382,103 @@ def crear_cuenta(request):
 
 #         # Esperar hasta que el campo de DNI esté disponible
 #         WebDriverWait(driver, 10).until(
-#             EC.presence_of_element_located((By.ID, 'dni'))
-#         )
+            # EC.presence_of_element_located((By.ID, 'dni'))
+    #     )
 
-#         # Ingresar el DNI y realizar la búsqueda
-#         dni_input = driver.find_element(By.ID, 'dni')
-#         dni_input.clear()
-#         dni_input.send_keys(dni)
+    #     # Ingresar el DNI y realizar la búsqueda
+    #     dni_input = driver.find_element(By.ID, 'dni')
+    #     dni_input.clear()
+    #     dni_input.send_keys(dni)
 
-#         btn_buscar = WebDriverWait(driver, 10).until(
-#             EC.element_to_be_clickable((By.ID, 'btn-buscar-datos-por-dni'))
-#         )
-#         btn_buscar.click()
+    #     btn_buscar = WebDriverWait(driver, 10).until(
+    #         EC.element_to_be_clickable((By.ID, 'btn-buscar-datos-por-dni'))
+    #     )
+    #     btn_buscar.click()
 
-#         # Esperar a que los datos sean cargados en la página
-#         WebDriverWait(driver, 10).until(
-#             EC.presence_of_element_located((By.ID, 'nombres'))
-#         )
+    #     # Esperar a que los datos sean cargados en la página
+    #     WebDriverWait(driver, 10).until(
+    #         EC.presence_of_element_located((By.ID, 'nombres'))
+    #     )
 
-#         # Extraer el contenido de la página
-#         response = driver.page_source
-#         soup = BeautifulSoup(response, 'html.parser')
+    #     # Extraer el contenido de la página
+    #     response = driver.page_source
+    #     soup = BeautifulSoup(response, 'html.parser')
 
-#         # Extraer los datos del formulario
-#         apellidop = soup.find('input', {'id': 'apellidop'})['value'].strip()
-#         apellidom = soup.find('input', {'id': 'apellidom'})['value'].strip()
-#         nombres = soup.find('input', {'id': 'nombres'})['value'].strip()
+    #     # Extraer los datos del formulario
+    #     apellidop = soup.find('input', {'id': 'apellidop'})['value'].strip()
+    #     apellidom = soup.find('input', {'id': 'apellidom'})['value'].strip()
+    #     nombres = soup.find('input', {'id': 'nombres'})['value'].strip()
 
-#         # Verificar que los datos se hayan obtenido correctamente
-#         if not (apellidop and apellidom and nombres):
-#             return False, "No se encontraron datos válidos para el DNI ingresado"
+    #     # Verificar que los datos se hayan obtenido correctamente
+    #     if not (apellidop and apellidom and nombres):
+    #         return False, "No se encontraron datos válidos para el DNI ingresado"
 
-#         nombre_lista_reniec = [apellidop, apellidom, nombres]
-#         print(f"Datos extraídos: {nombre_lista_reniec}")
-#         return True, nombre_lista_reniec
+    #     nombre_lista_reniec = [apellidop, apellidom, nombres]
+    #     print(f"Datos extraídos: {nombre_lista_reniec}")
+    #     return True, nombre_lista_reniec
 
-#     except Exception as e:
-#         print(f"Error al validar DNI: {e}")
-#         return False, "Ocurrió un error al validar el DNI"
+    # except Exception as e:
+    #     print(f"Error al validar DNI: {e}")
+    #     return False, "Ocurrió un error al validar el DNI"
 
-#     finally:
-#         if driver:
-#             driver.quit()
+    # finally:
+    #     if driver:
+    #         driver.quit()
 
 
-def validate_dni(dni):
+
+def validate_dni(dni): 
     # Verificar si el DNI tiene 8 dígitos y es numérico
     if len(dni) != 8 or not dni.isdigit():
         return False, "DNI inválido: debe tener 8 dígitos"
 
+    # Configuración de Selenium para buscar el DNI en eldni.com
+    chrome_options = Options()
+    # Modo headless para evitar mostrar el navegador
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+
+    # Ruta a chromedriver
+    chromedriver_path = '/usr/bin/chromedriver'
+
+    # Inicializar el servicio de ChromeDriver
+    service = Service(executable_path=chromedriver_path)
+
+    driver = None
     try:
-        # URL del sitio web
-        url = 'https://eldni.com/'
+        # Inicializar el navegador con el servicio y las opciones
+        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.get('https://eldni.com/')
 
-        # Crear una sesión para manejar cookies
-        session = requests.Session()
+        # Esperar hasta que el campo de DNI esté disponible
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'dni'))
+        )
 
-        # Realizar la solicitud inicial (GET) para obtener cookies o configuraciones
-        response = session.get(url)
-        if response.status_code != 200:
-            return False, "Error al acceder al sitio web"
+        # Ingresar el DNI y realizar la búsqueda
+        dni_input = driver.find_element(By.ID, 'dni')
+        dni_input.clear()
+        dni_input.send_keys(dni)
 
-        # Parsear la página inicial para obtener el token CSRF si es necesario
-        soup = BeautifulSoup(response.text, 'html.parser')
-        csrf_token = soup.find('input', {'name': 'csrfmiddlewaretoken'})
-        csrf_token = csrf_token['value'] if csrf_token else None
+        btn_buscar = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, 'btn-buscar-datos-por-dni'))
+        )
+        btn_buscar.click()
 
-        # Preparar los datos para la solicitud POST
-        payload = {
-            'dni': dni,
-        }
-        if csrf_token:
-            payload['csrfmiddlewaretoken'] = csrf_token
+        # Esperar a que los datos sean cargados en la página
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'nombres'))
+        )
 
-        # Realizar la solicitud POST para buscar el DNI
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Referer': url,
-        }
-        post_response = session.post(url, data=payload, headers=headers)
-        if post_response.status_code != 200:
-            return False, "Error al realizar la búsqueda del DNI"
+        # Extraer el contenido de la página
+        response = driver.page_source
+        soup = BeautifulSoup(response, 'html.parser')
 
-        # Parsear la respuesta después del POST
-        soup = BeautifulSoup(post_response.text, 'html.parser')
-
-        # Extraer los datos del formulario (cambiar los IDs según corresponda)
+        # Extraer los datos del formulario
         apellidop = soup.find('input', {'id': 'apellidop'})['value'].strip()
         apellidom = soup.find('input', {'id': 'apellidom'})['value'].strip()
         nombres = soup.find('input', {'id': 'nombres'})['value'].strip()
@@ -470,6 +494,10 @@ def validate_dni(dni):
     except Exception as e:
         print(f"Error al validar DNI: {e}")
         return False, "Ocurrió un error al validar el DNI"
+
+    finally:
+        if driver:
+            driver.quit()
 
 
 

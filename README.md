@@ -35,24 +35,48 @@ Tener un entorno Ubuntu, ya sea:
 - Como sistema operativo principal.
 - Usando WSL (Windows Subsystem for Linux). [Configurar WSL](https://learn.microsoft.com/es-es/windows/wsl/install).
 
-### SQLite
-Dentro del entorno Ubuntu instalar SQLite en caso de no tenerlo:
-
-Actualizar el sistema:
+### Guía de Instalación de Dependencias para Automatización Web en WSL
+**Instalar Python y pip**  
+Si no tienes Python y pip instalados en tu entorno WSL, instálalos con los siguientes comandos:
 ```bash
 sudo apt update
-sudo apt upgrade
+sudo apt install python3 python3-pip
 ```
 
-Instalar SQLite:
+**Instalar Google Chrome y Chromium en WSL**  
+Para comenzar, debes instalar Google Chrome o Chromium en tu entorno WSL.
+1. Instalar Chromium  
 ```bash
-sudo apt install sqlite3
+sudo apt update
+sudo apt install chromium-browser
 ```
 
-Verificar la instalación:
+2. Instalar Google Chrome
 ```bash
-sqlite3 --version
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f
 ```
+3. Instalar Chromedriver en WSL
+Una vez que tengas instalado Chromium o Google Chrome, debes instalar Chromedriver, que es necesario para controlar el navegador con Selenium.
+```bash
+sudo apt install chromium-chromedriver
+```
+
+4. Verificar las instalaciones
+Para asegurarte de que todo esté instalado correctamente, verifica las versiones de Chromium y ChromeDriver:
+```bash
+chromium-browser --version
+chromedriver --version
+google-chrome --version
+```
+
+5. Verificar la instalación del navegador y Chromedriver
+Para asegurarte de que Google Chrome o Chromium y Chromedriver estén correctamente instalados, puedes ejecutar los siguientes comandos:
+```bash
+which chromedriver
+```
+Pega la ruta que obtengas al ejecutar este comando en tu código, para asegurarte de que Selenium pueda localizar el ejecutable de Chromedriver.
 
 ---
 
@@ -61,8 +85,8 @@ sqlite3 --version
 ### Clonar el Repositorio
 Clone el repositorio y acceda a la carpeta creada:
 ```bash
-git clone https://github.com/g93624829/gestion_docente_certus.git
-cd <NOMBRE_DEL_REPOSITORIO>
+git clone https://github.com/g93624829/gestion_docente.git
+cd gestion_docente
 ```
 
 ### Abrir Carpeta en VSC
@@ -125,7 +149,7 @@ Acceda al enlace que genera (generalmente [http://127.0.0.1:8000/](http://127.0.
    ```
 
 ### Crear un Superusuario
-1. **Crea el Superusuario en Django**  
+1. **Crea el Superusuario y llenar las tablas en Django**  
    Ejecuta el siguiente comando en la terminal del servidor:
    ```bash
    python manage.py createsuperuser
@@ -135,51 +159,23 @@ Acceda al enlace que genera (generalmente [http://127.0.0.1:8000/](http://127.0.
    - **Email:** test@test.com
    - **Password:** contrasenia
 
-2. **Abre la Consola de SQLite**  
-   Ejecuta este comando:
+   Ejecute el siguiente comando en la terminal del servidor:
    ```bash
-   sqlite3 db.sqlite3
+   python manage.py loaddata autenticacion/fixtures/carreras_cursos.json
    ```
+   Ese comando hace lo siguiente:
+   - Agregar el superusuario a la tabla miperfil, permitiéndole acceder a la plataforma.
+   - Registrar las carreras de los alumnos.
+   - Asignar los cursos que enseñan los profesores."
+   Proporcione:
 
-3. **Verifica el ID del Superusuario**  
-   Ejecuta esta consulta en SQLite para obtener el ID:
-   ```sql
-   SELECT id, username, email FROM auth_user;
-   ```
-   Nota: Toma nota del valor del `id` (supongamos que es `1`).
-
-4. **Inserta el Registro en MiPerfil**  
-   Ejecuta la siguiente consulta para crear el perfil asociado, No modifiques el valor en 'tipo_usuario' donde dice 'supervisor(a)'; este campo debe permanecer tal como está:
-   ```sql
-   INSERT INTO autenticacion_miperfil (
-       user_id, dni, tipo_usuario, nombre_usuario, correo_electronico, descripcion, numero_telefono
-   )
-   VALUES (
-       1, '87654321', 'supervisor(a)', 'usuario', 'test@test.com', 'Este es el perfil del superusuario', '987654321'
-   );
-   ```
-
-5. **Verifica la Inserción**  
-   Ejecuta esta consulta:
-   ```sql
-   SELECT * FROM autenticacion_miperfil;
-   ```
-   Deberías ver el registro del perfil creado.
-
-6. **Sal de SQLite**  
-   Escribe:
-   ```bash
-   .exit
-   ```
-   ¡Felicidades! Has creado con éxito el perfil de usuario en la base de datos.
-
-7. **Confirmación en Django**  
+2. **Confirmación en Django**  
    Ejecuta el servidor para verificar que ya no recibes el error 404:
    ```bash
    python manage.py runserver
    ```
 
-8. **Vista de tablas**  
+3. **Vista de tablas**  
    Usando el programa **SQLiteDatabaseBrowserPortable**, abre el archivo `db.sqlite3` que se creó en la carpeta raíz. Luego, haz clic en **Browse Data** y seleccione una tabla, deben verse de forma similar a esto: 
    
 **Tabla `auth_user`** estos datos fueron creados por el `python manage.py createsuperuser` en el paso 1 **Crea el Superusuario en Django**:
@@ -194,6 +190,10 @@ Acceda al enlace que genera (generalmente [http://127.0.0.1:8000/](http://127.0.
 |--|--------|-------------|--------------|------------------|----------------------------------|---------------|-------|
 | 1|87654321|supervisor(a)|usuario       |test@test.com     |Este es el perfil del superusuario|987654321      |1      |
 
+### Iniciar sesión
+1. Ingresa a la página a través del `http://127.0.0.1:8000/`
+2. Hace click en el boton de Iniciar Sesión
+3. Ingresa sus credenciales creados: **USUARIO**: test@test.com, **CONTRASEÑA**: contrasenia
 
 ---
 
