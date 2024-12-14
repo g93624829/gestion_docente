@@ -1,0 +1,470 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-4">Reporte de Clase</h1>
+
+    <form class="card shadow p-4 bg-white" action="" method="POST">
+        {% csrf_token %}
+        {% if messages %}
+            <div class="alert alert-success" role="alert">
+                <ul class="list-unstyled mb-0">
+                    {% for message in messages %}
+                        <li class="mb-2 text-uppercase">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="mb-3">
+            <label for="profesor">Selecciona un Docente:</label>
+            <select name="profesor" id="profesor" class="form-select" required>
+                <option value="" selected disabled>Selecciona un docente</option>
+                {% for profesor in profesores %}
+                <option value="{{ profesor.id }}" 
+                        data-dni="{{ profesor.dni }}" 
+                        data-cursos="{% for curso in profesor.cursos.all %}{{ curso.nombre_curso }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                    {{ profesor.nombre_completo|upper }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="dni" class="form-label">DNI:</label>
+            <input type="text" id="dni" name="DNI" class="form-control" pattern="\d{8}" maxlength="8"
+                title="Debe ser un DNI de 8 dígitos" required readonly>
+        </div>
+        
+        <div class="mb-3">
+            <label for="cursos" class="form-label">Unidad Didáctica:</label>
+            <select name="cursos" id="cursos" class="form-select" required>
+                <option value="" selected disabled>Primero selecciona un docente</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="nrc" class="form-label">NRC:</label>
+            <input type="text" id="nrc" name="NRC" class="form-control" required>
+        </div>
+
+        {% comment %} <div class="mb-3">
+            <label for="unidad_didactica" class="form-label">Unidad Didáctica:</label>
+            <input type="text" id="unidad_didactica" name="UNIDAD_DIDACTICA" class="form-control" required>
+        </div> {% endcomment %}
+
+        {% comment %} <div class="mb-3">
+            <label for="ciclo" class="form-label">Ciclo:</label>
+            <input type="text" id="ciclo" name="CICLO" class="form-control" required>
+        </div> {% endcomment %}
+        <div class="mb-3">
+            <label for="ciclo" class="form-label">Ciclo:</label>
+            <select id="ciclo" name="CICLO" class="form-control" required>
+                <option value="" selected disabled>Selecciona un ciclo...</option>
+                <option value="I">I</option>
+                <option value="II">II</option>
+                <option value="III">III</option>
+                <option value="IV">IV</option>
+                <option value="V">V</option>
+                <option value="VI">VI</option>
+            </select>
+        </div>
+        
+
+        <div class="mb-3">
+            <label for="nombre_supervisor" class="form-label">Nombre del Supervisor:</label>
+            <input type="text" id="nombre_supervisor" name="NOMBRE_DEL_SUPERVISOR" 
+                   class="form-control text-uppercase" value="{{ usuario_actual }}" readonly required>
+        </div>
+        
+        
+
+        
+
+        {% comment %} SECCIÓN DE PREGUNTAS {% endcomment %}
+        <div class="mb-3">
+            <p>1. Presenta sesión sin ninguna interferencia de audio y/o video.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_1_1" name="pregunta_1" value="logrado_1_1"
+                    class="form-check-input" required>
+                <label for="logrado_1_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_1_2" name="pregunta_1" value="proceso_1_2"
+                    class="form-check-input">
+                <label for="proceso_1_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_1_3" name="pregunta_1" value="fallido_1_3"
+                    class="form-check-input">
+                <label for="fallido_1_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+
+
+        <div class="mb-3">
+            <p>2. Activa audio y cámara de video permanentemente durante toda la sesión.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_2_1" name="pregunta_2" value="logrado_2_1"
+                    class="form-check-input" required>
+                <label for="logrado_2_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_2_2" name="pregunta_2" value="proceso_2_2"
+                    class="form-check-input">
+                <label for="proceso_2_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_2_3" name="pregunta_2" value="fallido_2_3"
+                    class="form-check-input">
+                <label for="fallido_2_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>3. Incluye videos, PPTs actualizadas, páginas, aplicaciones y herramientas digitales.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_3_1" name="pregunta_3" value="logrado_3_1"
+                    class="form-check-input" required>
+                <label for="logrado_3_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_3_2" name="pregunta_3" value="proceso_3_2"
+                    class="form-check-input">
+                <label for="proceso_3_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_3_3" name="pregunta_3" value="fallido_3_3"
+                    class="form-check-input">
+                <label for="fallido_3_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>4. Utiliza herramientas del BBB como encuestas, salas, pizarra, chat y block de notas.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_4_1" name="pregunta_4" value="logrado_4_1"
+                    class="form-check-input" required>
+                <label for="logrado_4_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_4_2" name="pregunta_4" value="proceso_4_2"
+                    class="form-check-input">
+                <label for="proceso_4_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_4_3" name="pregunta_4" value="fallido_4_3"
+                    class="form-check-input">
+                <label for="fallido_4_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>5. Duración de grabación de sesión evaluada corresponde a la cantidad de minutos asignados a la
+                misma.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_5_1" name="pregunta_5" value="logrado_5_1"
+                    class="form-check-input" required>
+                <label for="logrado_5_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_5_2" name="pregunta_5" value="proceso_5_2"
+                    class="form-check-input">
+                <label for="proceso_5_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_5_3" name="pregunta_5" value="fallido_5_3"
+                    class="form-check-input">
+                <label for="fallido_5_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>6. Emplea diferentes materiales didácticos (casos, noticias, lecturas, experiencias, etc) para el
+                desarrollo
+                de la sesión.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_6_1" name="pregunta_6" value="logrado_6_1"
+                    class="form-check-input" required>
+                <label for="logrado_6_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_6_2" name="pregunta_6" value="proceso_6_2"
+                    class="form-check-input">
+                <label for="proceso_6_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_6_3" name="pregunta_6" value="fallido_6_3"
+                    class="form-check-input">
+                <label for="fallido_6_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>7. Su presentación personal es adecuada (vestimenta, tono de voz, lenguaje no verbal y actitud).</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_7_1" name="pregunta_7" value="logrado_7_1"
+                    class="form-check-input" required>
+                <label for="logrado_7_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_7_2" name="pregunta_7" value="proceso_7_2"
+                    class="form-check-input">
+                <label for="proceso_7_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_7_3" name="pregunta_7" value="fallido_7_3"
+                    class="form-check-input">
+                <label for="fallido_7_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>8. Evidencia acuerdos de convivencia con los estudiantes (orden en el ingreso de estudiantes a clase,
+                invtervenciones, etc), mostrando autoridad y manejo de grupo.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_8_1" name="pregunta_8" value="logrado_8_1"
+                    class="form-check-input" required>
+                <label for="logrado_8_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_8_2" name="pregunta_8" value="proceso_8_2"
+                    class="form-check-input">
+                <label for="proceso_8_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_8_3" name="pregunta_8" value="fallido_8_3"
+                    class="form-check-input">
+                <label for="fallido_8_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>9. Genera un clima de confianza y respeto en la relación con el estudiante.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_9_1" name="pregunta_9" value="logrado_9_1"
+                    class="form-check-input" required>
+                <label for="logrado_9_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_9_2" name="pregunta_9" value="proceso_9_2"
+                    class="form-check-input">
+                <label for="proceso_9_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_9_3" name="pregunta_9" value="fallido_9_3"
+                    class="form-check-input">
+                <label for="fallido_9_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>10. Promueve la participación activa del estudiante proponiendo actividades que fomentan la
+                interacción en
+                espacios de trabajo colaborativo.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_10_1" name="pregunta_10" value="logrado_10_1"
+                    class="form-check-input" required>
+                <label for="logrado_10_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_10_2" name="pregunta_10" value="proceso_10_2"
+                    class="form-check-input">
+                <label for="proceso_10_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_10_3" name="pregunta_10" value="fallido_10_3"
+                    class="form-check-input">
+                <label for="fallido_10_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>11. Verifica el aprendizaje y la comprensión a través de preguntas y/o actividades breves que
+                involucran a
+                todos los estudiantes.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_11_1" name="pregunta_11" value="logrado_11_1"
+                    class="form-check-input" required>
+                <label for="logrado_11_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_11_2" name="pregunta_11" value="proceso_11_2"
+                    class="form-check-input">
+                <label for="proceso_11_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_11_3" name="pregunta_11" value="fallido_11_3"
+                    class="form-check-input">
+                <label for="fallido_11_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>12. Muestra apertura a las consultas de los estudiantes respondiendolas oportunamente.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_12_1" name="pregunta_12" value="logrado_12_1"
+                    class="form-check-input" required>
+                <label for="logrado_12_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_12_2" name="pregunta_12" value="proceso_12_2"
+                    class="form-check-input">
+                <label for="proceso_12_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_12_3" name="pregunta_12" value="fallido_12_3"
+                    class="form-check-input">
+                <label for="fallido_12_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>13. Personaliza la interacción llamando a los estudiantes por sus nombres retroalimentando
+                positivamente sus
+                intervenciones.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_13_1" name="pregunta_13" value="logrado_13_1"
+                    class="form-check-input" required>
+                <label for="logrado_13_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_13_2" name="pregunta_13" value="proceso_13_2"
+                    class="form-check-input">
+                <label for="proceso_13_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_13_3" name="pregunta_13" value="fallido_13_3"
+                    class="form-check-input">
+                <label for="fallido_13_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>14. Promueve la reflexión y la actitud crítica respecto al tema desarrollado.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_14_1" name="pregunta_14" value="logrado_14_1"
+                    class="form-check-input" required>
+                <label for="logrado_14_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_14_2" name="pregunta_14" value="proceso_14_2"
+                    class="form-check-input">
+                <label for="proceso_14_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_14_3" name="pregunta_14" value="fallido_14_3"
+                    class="form-check-input">
+                <label for="fallido_14_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>15. Aplica la teoría situaciones reales mediante casos, problemas prácticos de acuerdo cno el
+                contexto
+                profesional.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_15_1" name="pregunta_15" value="logrado_15_1"
+                    class="form-check-input" required>
+                <label for="logrado_15_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_15_2" name="pregunta_15" value="proceso_15_2"
+                    class="form-check-input">
+                <label for="proceso_15_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_15_3" name="pregunta_15" value="fallido_15_3"
+                    class="form-check-input">
+                <label for="fallido_15_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>16. Planifica actividades orientadas al logro del objetivo de acuerdo al momento de la sesión
+                (inicio:
+                CONECTAR proceso: CONSTRUIR y/o cierre: REFLEXIONAR).</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_16_1" name="pregunta_16" value="logrado_16_1"
+                    class="form-check-input" required>
+                <label for="logrado_16_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_16_2" name="pregunta_16" value="proceso_16_2"
+                    class="form-check-input">
+                <label for="proceso_16_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_16_3" name="pregunta_16" value="fallido_16_3"
+                    class="form-check-input">
+                <label for="fallido_16_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>17. Evidencia uso de instrumentos(s) de medición de niveles de desempeño y explica criterios de
+                evaluación de
+                manera adecuada.</p>
+            <div class="form-check">
+                <input type="radio" id="logrado_17_1" name="pregunta_17" value="logrado_17_1"
+                    class="form-check-input" required>
+                <label for="logrado_17_1" class="form-check-label">Logrado</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="proceso_17_2" name="pregunta_17" value="proceso_17_2"
+                    class="form-check-input">
+                <label for="proceso_17_2" class="form-check-label">Proceso</label>
+            </div>
+            <div class="form-check">
+                <input type="radio" id="fallido_17_3" name="pregunta_17" value="fallido_17_3"
+                    class="form-check-input">
+                <label for="fallido_17_3" class="form-check-label">Fallido</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="sugerencias" class="form-label">Sugerencias del Observador:</label>
+            <textarea id="sugerencias" name="SUGERENCIAS_DEL_OBSERVADOR" class="form-control" rows="4"
+                required></textarea>
+        </div>
+
+        <button type="submit">Enviar Reporte</button>
+    </form>
+</div>
+<script>
+    document.getElementById('profesor').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        
+        // Obtén el DNI y los cursos
+        const dni = selectedOption.getAttribute('data-dni');
+        const cursos = selectedOption.getAttribute('data-cursos').split(',').map(curso => curso.trim());
+    
+        // Asigna el DNI
+        document.getElementById('dni').value = dni || '';
+    
+        // Actualiza el select de cursos
+        const cursosSelect = document.getElementById('cursos');
+        cursosSelect.innerHTML = '<option value="" selected disabled>Selecciona un curso</option>';
+    
+        if (cursos.length > 0 && cursos[0] !== '') {
+            cursos.forEach((curso, index) => {
+                const option = document.createElement('option');
+                option.value = index;  // Usa el índice como valor temporal
+                option.textContent = curso;  // Solo muestra el nombre del curso
+                cursosSelect.appendChild(option);
+            });
+        } else {
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "Sin cursos asignados";
+            cursosSelect.appendChild(option);
+        }
+    });
+</script>
+
+
+
+
+
+
+{% endblock content %}

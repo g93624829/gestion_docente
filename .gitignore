@@ -1,0 +1,32 @@
+# Entorno Virtual
+venv/
+
+# Archivos de base de datos SQLite (si no usas PostgreSQL o alguna otra base de datos en desarrollo)
+db.sqlite3
+
+# Archivos generados por el sistema
+*.log
+*.pot
+*.pyc
+*.pyo
+*.~*
+
+# Archivos de compilación
+*.pyc
+*.pyo
+__pycache__/
+
+# Archivos de configuración de IDEs o editores
+.idea/
+.vscode/
+
+# Archivos de entorno
+.env
+
+# Archivos generados por Django
+*.sqlite3
+*.log
+
+# Otros archivos que puedas necesitar excluir (por ejemplo, archivos temporales de pruebas o similares)
+*.bak
+*.swp

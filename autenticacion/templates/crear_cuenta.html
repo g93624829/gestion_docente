@@ -1,0 +1,457 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+<main class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 mt-5">
+            {% comment %} {{ tipo_usuario_actual }} {% endcomment %}
+            {% if tipo_usuario_actual == 'alumno(a)' %}
+            <h4 class="card-title">Alumno(a) no pueden crear cuentas</h4>
+            {% elif tipo_usuario_actual == 'profesor(a)' %}
+            <h4 class="card-title">Profesor(a) no pueden crear cuentas</h4>
+            {% else %}
+            <form method="POST" class="card card-body">
+                <h1 class="text-center">Crear cuenta</h1>
+                <strong class="text-danger">{{ error }}</strong>
+                {% if mensaje_de_confirmacion %}
+                <div class="alert alert-success" role="alert">
+                    {{ mensaje_de_confirmacion }}</p>
+                    <strong>Correo: </strong><p>{{ correo_creado_exitosamente }}</p>
+                    <strong>Contraseña: </strong><p>{{ contrasenia_creada_exitosamente }}</p>
+                </div>
+                {% endif %}
+
+                {% csrf_token %}
+                <!-- Tipo de usuario -->
+                <div class="mb-3">
+                    <label for="opciones">Tipo de Usuario:</label>
+                    <select id="opciones" name="tipo_usuario" class="form-select" required>
+                        <option value="">--Selecciona--</option>
+                        <option value="alumno(a)">Alumno(a)</option>
+                        <option value="profesor(a)">Profesor(a)</option>
+                        <option value="supervisor(a)">Supervisor(a)</option>
+                    </select>
+                </div>
+
+                <div id="barra-opciones" style="display: none;">
+                    <!-- Aquí se mostrarán las opciones dinámicas -->
+                </div>
+
+                <!-- Información personal -->
+                <div class="mb-3">
+                    <label for="nombres">Nombres:</label>
+                    <input required type="text" name="nombres" class="form-control" placeholder="Nombres" id="nombres">
+                </div>
+                <div class="mb-3">
+                    <label for="apellidop">Apellido paterno:</label>
+                    <input required type="text" name="apellidop" class="form-control" placeholder="Apellido paterno" id="apellidop">
+                </div>
+                <div class="mb-3">
+                    <label for="apellidom">Apellido materno:</label>
+                    <input required type="text" name="apellidom" class="form-control" placeholder="Apellido materno" id="apellidom">
+                </div>
+                <div class="mb-3">
+                    <label for="dni">Número de DNI:</label>
+                    <input required type="number" name="dni" class="form-control" placeholder="Número de DNI" id="dni">
+                </div>
+                <div class="mb-3">
+                    <label for="email">Correo electrónico:</label>
+                    <input required type="email" name="email" class="form-control" placeholder="Correo electrónico" id="email">
+                </div>
+
+                <!-- Contraseña -->
+                <div class="mb-3">
+                    <label for="password1">Contraseña:</label>
+                    <input required type="password" name="password1" class="form-control" placeholder="Contraseña" id="password1">
+                </div>
+                <div class="mb-3">
+                    <label for="password2">Confirme su contraseña:</label>
+                    <input required type="password" name="password2" class="form-control" placeholder="Confirma tu contraseña" id="password2">
+                </div>
+
+                <!-- Botón de envío -->
+                <button class="btn btn-dark">Signup</button>
+            </form>
+            {% endif %}
+
+
+            
+        </div>
+    </div>
+</main>
+
+<!-- Carga de Select2 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
+<script>
+    document.getElementById('opciones').addEventListener('change', function () {
+        const seleccion = this.value;
+        const barraOpciones = document.getElementById('barra-opciones');
+
+        // Limpiar contenido anterior y ocultar barra
+        barraOpciones.innerHTML = '';
+        barraOpciones.style.display = 'none';
+
+        if (seleccion === 'alumno(a)') {
+            barraOpciones.innerHTML = `
+                <label for="carrera">Carrera:</label>
+                <select id="carrera" name="carrera" class="form-select" style="margin-bottom: 16px;" required>
+                    <option value="">--Selecciona--</option>
+                    <option value="CARR_001">Administración de Empresas</option>
+                    <option value="CARR_002">Administración de Negocios Internacionales</option>
+                    <option value="CARR_003">Marketing</option>
+                    <option value="CARR_004">Administración y Gestión Comercial</option>
+                    <option value="CARR_005">Administración y Recursos Humanos</option>
+                    <option value="CARR_006">Contabilidad y Tributación</option>
+                    <option value="CARR_007">Administración Bancaria y Financiera</option>
+                    <option value="CARR_008">Diseño y Desarrollo de Software</option>
+                    <option value="CARR_009">Administración de Sistemas</option>
+                    <option value="CARR_010">Publicidad</option>
+                    <option value="CARR_011">Diseño Gráfico</option>
+                </select>
+            `;
+        }
+        else if (seleccion === 'profesor(a)') {
+            barraOpciones.innerHTML = `
+                <label for="cursos">Cursos que enseña:</label>
+                <div id="lista-cursos">
+                    <div class="curso-item mb-3">
+                        <select name="cursos[]" class="form-select curso-select" required>
+                            <option value="">--Selecciona un curso--</option>
+                            <option value="CURS_101">Administración de negocios</option>
+                            <option value="CURS_102">Administración de operaciones</option>
+                            <option value="CURS_103">Administración de personal</option>
+                            <option value="CURS_104">Administración de sistemas</option>
+                            <option value="CURS_105">Administración de la arquitectura de TI</option>
+                            <option value="CURS_106">Algoritmos para la solución de problemas</option>
+                            <option value="CURS_107">Análisis de la información financiera</option>
+                            <option value="CURS_108">Análisis e interpretación de estados financieros</option>
+                            <option value="CURS_109">Análisis y diseño de soluciones de TI</option>
+                            <option value="CURS_110">Analítica de la información</option>
+                            <option value="CURS_111">Auditoría</option>
+                            <option value="CURS_112">Auditoría y estrategias de marca</option>
+                            <option value="CURS_113">Banca comercial</option>
+                            <option value="CURS_114">Big data aplicada a los negocios</option>
+                            <option value="CURS_115">Cálculo financiero y tributario para declaración jurada anual</option>
+                            <option value="CURS_116">Ciberseguridad</option>
+                            <option value="CURS_117">Clima y cultura organizacional</option>
+                            <option value="CURS_118">Cloud services</option>
+                            <option value="CURS_119">Comportamiento del consumidor</option>
+                            <option value="CURS_120">Comunicación estratégica</option>
+                            <option value="CURS_121">Comunicación estratégica en marketing</option>
+                            <option value="CURS_122">Comunicación y gestión de la información</option>
+                            <option value="CURS_123">Composición y color</option>
+                            <option value="CURS_124">Constitución y organización de empresas</option>
+                            <option value="CURS_125">Contabilidad</option>
+                            <option value="CURS_126">Contabilidad aplicada al marketing</option>
+                            <option value="CURS_127">Contabilidad de entidades financieras</option>
+                            <option value="CURS_128">Contabilidad gerencial</option>
+                            <option value="CURS_129">Contabilidad gubernamental</option>
+                            <option value="CURS_130">Contabilidad superior</option>
+                            <option value="CURS_131">Contabilidad tributaria y laboral</option>
+                            <option value="CURS_132">Control de despacho</option>
+                            <option value="CURS_133">Control interno</option>
+                            <option value="CURS_134">Control interno y auditoría de operaciones</option>
+                            <option value="CURS_135">Control y valorización de inventarios</option>
+                            <option value="CURS_136">Contenidos digitales</option>
+                            <option value="CURS_137">Contenidos publicitarios</option>
+                            <option value="CURS_138">Creatividad e innovación</option>
+                            <option value="CURS_139">Creatividad publicitaria</option>
+                            <option value="CURS_140">Cierre contable tributario</option>
+                            <option value="CURS_141">Cotizaciones, precios y costos de servicios logísticos</option>
+                            <option value="CURS_142">Costos y presupuestos</option>
+                            <option value="CURS_143">Desarrollo y soporte de aplicaciones multiplataforma</option>
+                            <option value="CURS_144">Diseño de arquitectura de TI</option>
+                            <option value="CURS_145">Diseño de bases de datos</option>
+                            <option value="CURS_146">Diseño de elementos visuales</option>
+                            <option value="CURS_147">Diseño de empaques</option>
+                            <option value="CURS_148">Diseño de interfaces gráficas</option>
+                            <option value="CURS_149">Diseño de negocios digitales para el sector financiero</option>
+                            <option value="CURS_150">Diseño de pruebas de software</option>
+                            <option value="CURS_151">Diseño de soluciones basadas en servicio</option>
+                            <option value="CURS_152">Diseño de soluciones blockchain</option>
+                            <option value="CURS_153">Diseño de soluciones de big data</option>
+                            <option value="CURS_154">Diseño de soluciones de inteligencia artificial</option>
+                            <option value="CURS_155">Diseño e implementación de estrategias comerciales</option>
+                            <option value="CURS_156">Diseño y gestión de productos</option>
+                            <option value="CURS_157">Dibujo digital vectorial</option>
+                            <option value="CURS_158">Dirección comercial y de marketing</option>
+                            <option value="CURS_159">Dirección de operaciones</option>
+                            <option value="CURS_160">Dirección estratégica</option>
+                            <option value="CURS_161">Dirección financiera</option>
+                            <option value="CURS_162">Dinámica del plan contable</option>
+                            <option value="CURS_163">Edición digital</option>
+                            <option value="CURS_164">Edición y postproducción audiovisual</option>
+                            <option value="CURS_165">Emprendimiento creatividad e innovación</option>
+                            <option value="CURS_166">Emprendimiento modelo de negocio</option>
+                            <option value="CURS_167">Emprendimiento plan de desarrollo del negocio</option>
+                            <option value="CURS_168">Emprendimiento proyecto integrador</option>
+                            <option value="CURS_169">Estrategias de comercio internacional</option>
+                            <option value="CURS_170">Estrategias de fidelización y retención de clientes</option>
+                            <option value="CURS_171">Estrategias de medios digitales</option>
+                            <option value="CURS_172">Estrategias publicitarias</option>
+                            <option value="CURS_173">Estrategia de medios</option>
+                            <option value="CURS_174">Estrategia de ventas</option>
+                            <option value="CURS_175">Ética en los negocios</option>
+                            <option value="CURS_176">Ética profesional</option>
+                            <option value="CURS_177">Evaluación de créditos</option>
+                            <option value="CURS_178">Experiencia del cliente</option>
+                            <option value="CURS_179">Experiencias formativas 1</option>
+                            <option value="CURS_180">Experiencias formativas 2</option>
+                            <option value="CURS_181">Experiencias formativas 3</option>
+                            <option value="CURS_182">Experiencias formativas 4</option>
+                            <option value="CURS_183">Finanzas internacionales</option>
+                            <option value="CURS_184">Finanzas para la toma de decisiones</option>
+                            <option value="CURS_185">Flujos operativos comerciales</option>
+                            <option value="CURS_186">Fotografía</option>
+                            <option value="CURS_187">Formulación de estados financieros</option>
+                            <option value="CURS_188">Formación y desarrollo de personas</option>
+                            <option value="CURS_189">Fundamentos de la publicidad</option>
+                            <option value="CURS_190">Gestión aduanera</option>
+                            <option value="CURS_191">Gestión de almacenes</option>
+                            <option value="CURS_192">Gestión de la cadena de suministro</option>
+                            <option value="CURS_193">Gestión de créditos y cobranzas</option>
+                            <option value="CURS_194">Gestión de equipos</option>
+                            <option value="CURS_195">Gestión de equipos de marketing</option>
+                            <option value="CURS_196">Gestión de la calidad en comercio exterior</option>
+                            <option value="CURS_197">Gestión de la continuidad de servicios de TI</option>
+                            <option value="CURS_198">Gestión de costos</option>
+                            <option value="CURS_199">Gestión de indicadores de marketing y comercial</option>
+                            <option value="CURS_200">Gestión de la marca personal</option>
+                            <option value="CURS_201">Gestión de procesos de mejora continua</option>
+                            <option value="CURS_202">Gestión de procesos de negocios</option>
+                            <option value="CURS_203">Gestión de proveedores</option>
+                            <option value="CURS_204">Gestión de servicios de TI</option>
+                            <option value="CURS_205">Gestión empresarial basada en BI</option>
+                            <option value="CURS_206">Gestión y planeamiento tributario</option>
+                            <option value="CURS_207">Gobierno de TI</option>
+                            <option value="CURS_208">Guión audiovisual</option>
+                            <option value="CURS_209">Herramientas digitales para los negocios</option>
+                            <option value="CURS_210">Implementación de bases de datos</option>
+                            <option value="CURS_211">Implementación de soluciones innovadoras</option>
+                            <option value="CURS_212">Implementación de soluciones para plataformas móviles</option>
+                            <option value="CURS_213">Implementación de soluciones para plataformas multiusuario</option>
+                            <option value="CURS_214">Implementación de soluciones para plataformas web</option>
+                            <option value="CURS_215">Implementación de arquitectura de TI</option>
+                            <option value="CURS_216">Indicadores para RRHH</option>
+                            <option value="CURS_217">Inglés aplicado a proyectos empresariales</option>
+                            <option value="CURS_218">Inglés para la comunicación en los negocios</option>
+                            <option value="CURS_219">Inglés para los negocios internacionales</option>
+                            <option value="CURS_220">Innovación y diseño CX</option>
+                            <option value="CURS_221">Introducción a la investigación</option>
+                            <option value="CURS_222">Investigación aplicada</option>
+                            <option value="CURS_223">Investigación de mercado</option>
+                            <option value="CURS_224">Investigación de mercados</option>
+                            <option value="CURS_225">Leyes y normatividad publicitarias</option>
+                            <option value="CURS_226">Liderazgo estratégico</option>
+                            <option value="CURS_227">Marketing</option>
+                            <option value="CURS_228">Marketing estratégico</option>
+                            <option value="CURS_229">Marketing intelligence</option>
+                            <option value="CURS_230">Marketing internacional</option>
+                            <option value="CURS_231">Matemáticas aplicadas al desarrollo y soporte de sistemas</option>
+                            <option value="CURS_232">Medios digitales</option>
+                            <option value="CURS_233">Medios no tradicionales</option>
+                            <option value="CURS_234">Metodología cualitativa</option>
+                            <option value="CURS_235">Metodología cuantitativa</option>
+                            <option value="CURS_236">Metodologías ágiles para la innovación</option>
+                            <option value="CURS_237">Metodologías ágiles para la solución de problemas</option>
+                            <option value="CURS_238">Modelo de negocio</option>
+                            <option value="CURS_239">Modelo de negocios digitales</option>
+                            <option value="CURS_240">Modelo de soluciones basadas en servicio</option>
+                            <option value="CURS_241">Negociación comercial</option>
+                            <option value="CURS_242">Negociación estratégica</option>
+                            <option value="CURS_243">Nuevas tendencias en administración de empresas</option>
+                            <option value="CURS_244">Nuevas tendencias en contabilidad</option>
+                            <option value="CURS_245">Nuevas tendencias en gestión comercial</option>
+                            <option value="CURS_246">Nuevas tendencias en marketing</option>
+                            <option value="CURS_247">Nuevas tendencias en tecnologías de la información</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" id="btn-agregar-curso" class="btn btn-dark" style="margin-bottom: 16px">Agregar curso</button>
+            `;
+
+            const btnAgregarCurso = document.getElementById('btn-agregar-curso');
+            const listaCursos = document.getElementById('lista-cursos');
+
+            // Listener para agregar nuevos campos
+            btnAgregarCurso.addEventListener('click', function () {
+                const seleccionados = Array.from(document.querySelectorAll('.curso-select')).map(select => select.value);
+
+                // Crear una nueva lista desplegable
+                const nuevoCurso = document.createElement('div');
+                nuevoCurso.classList.add('curso-item', 'mb-3');
+                nuevoCurso.innerHTML = `
+                    <select name="cursos[]" class="form-select curso-select" required>
+                        <option value="">--Selecciona un curso--</option>
+                        ${getOpcionesCursos(seleccionados)}
+                    </select>
+                `;
+                listaCursos.appendChild(nuevoCurso);
+            });
+
+            // Función para obtener las opciones excluyendo las seleccionadas
+            function getOpcionesCursos(seleccionados) {
+                const cursos = [
+                    { value: "CURS_101", text: "Administración de negocios" },
+                    { value: "CURS_102", text: "Administración de operaciones" },
+                    { value: "CURS_103", text: "Administración de personal" },
+                    { value: "CURS_104", text: "Administración de sistemas" },
+                    { value: "CURS_105", text: "Administración de la arquitectura de TI" },
+                    { value: "CURS_106", text: "Algoritmos para la solución de problemas" },
+                    { value: "CURS_107", text: "Análisis de la información financiera" },
+                    { value: "CURS_108", text: "Análisis e interpretación de estados financieros" },
+                    { value: "CURS_109", text: "Análisis y diseño de soluciones de TI" },
+                    { value: "CURS_110", text: "Analítica de la información" },
+                    { value: "CURS_111", text: "Auditoría" },
+                    { value: "CURS_112", text: "Auditoría y estrategias de marca" },
+                    { value: "CURS_113", text: "Banca comercial" },
+                    { value: "CURS_114", text: "Big data aplicada a los negocios" },
+                    { value: "CURS_115", text: "Cálculo financiero y tributario para declaración jurada anual" },
+                    { value: "CURS_116", text: "Ciberseguridad" },
+                    { value: "CURS_117", text: "Clima y cultura organizacional" },
+                    { value: "CURS_118", text: "Cloud services" },
+                    { value: "CURS_119", text: "Comportamiento del consumidor" },
+                    { value: "CURS_120", text: "Comunicación estratégica" },
+                    { value: "CURS_121", text: "Comunicación estratégica en marketing" },
+                    { value: "CURS_122", text: "Comunicación y gestión de la información" },
+                    { value: "CURS_123", text: "Composición y color" },
+                    { value: "CURS_124", text: "Constitución y organización de empresas" },
+                    { value: "CURS_125", text: "Contabilidad" },
+                    { value: "CURS_126", text: "Contabilidad aplicada al marketing" },
+                    { value: "CURS_127", text: "Contabilidad de entidades financieras" },
+                    { value: "CURS_128", text: "Contabilidad gerencial" },
+                    { value: "CURS_129", text: "Contabilidad gubernamental" },
+                    { value: "CURS_130", text: "Contabilidad superior" },
+                    { value: "CURS_131", text: "Contabilidad tributaria y laboral" },
+                    { value: "CURS_132", text: "Control de despacho" },
+                    { value: "CURS_133", text: "Control interno" },
+                    { value: "CURS_134", text: "Control interno y auditoría de operaciones" },
+                    { value: "CURS_135", text: "Control y valorización de inventarios" },
+                    { value: "CURS_136", text: "Contenidos digitales" },
+                    { value: "CURS_137", text: "Contenidos publicitarios" },
+                    { value: "CURS_138", text: "Creatividad e innovación" },
+                    { value: "CURS_139", text: "Creatividad publicitaria" },
+                    { value: "CURS_140", text: "Cierre contable tributario" },
+                    { value: "CURS_141", text: "Cotizaciones, precios y costos de servicios logísticos" },
+                    { value: "CURS_142", text: "Costos y presupuestos" },
+                    { value: "CURS_143", text: "Desarrollo y soporte de aplicaciones multiplataforma" },
+                    { value: "CURS_144", text: "Diseño de arquitectura de TI" },
+                    { value: "CURS_145", text: "Diseño de bases de datos" },
+                    { value: "CURS_146", text: "Diseño de elementos visuales" },
+                    { value: "CURS_147", text: "Diseño de empaques" },
+                    { value: "CURS_148", text: "Diseño de interfaces gráficas" },
+                    { value: "CURS_149", text: "Diseño de negocios digitales para el sector financiero" },
+                    { value: "CURS_150", text: "Diseño de pruebas de software" },
+                    { value: "CURS_151", text: "Diseño de soluciones basadas en servicio" },
+                    { value: "CURS_152", text: "Diseño de soluciones blockchain" },
+                    { value: "CURS_153", text: "Diseño de soluciones de big data" },
+                    { value: "CURS_154", text: "Diseño de soluciones de inteligencia artificial" },
+                    { value: "CURS_155", text: "Diseño e implementación de estrategias comerciales" },
+                    { value: "CURS_156", text: "Diseño y gestión de productos" },
+                    { value: "CURS_157", text: "Dibujo digital vectorial" },
+                    { value: "CURS_158", text: "Dirección comercial y de marketing" },
+                    { value: "CURS_159", text: "Dirección de operaciones" },
+                    { value: "CURS_160", text: "Dirección estratégica" },
+                    { value: "CURS_161", text: "Dirección financiera" },
+                    { value: "CURS_162", text: "Dinámica del plan contable" },
+                    { value: "CURS_163", text: "Edición digital" },
+                    { value: "CURS_164", text: "Edición y postproducción audiovisual" },
+                    { value: "CURS_165", text: "Emprendimiento creatividad e innovación" },
+                    { value: "CURS_166", text: "Emprendimiento modelo de negocio" },
+                    { value: "CURS_167", text: "Emprendimiento plan de desarrollo del negocio" },
+                    { value: "CURS_168", text: "Emprendimiento proyecto integrador" },
+                    { value: "CURS_169", text: "Estrategias de comercio internacional" },
+                    { value: "CURS_170", text: "Estrategias de fidelización y retención de clientes" },
+                    { value: "CURS_171", text: "Estrategias de medios digitales" },
+                    { value: "CURS_172", text: "Estrategias publicitarias" },
+                    { value: "CURS_173", text: "Estrategia de medios" },
+                    { value: "CURS_174", text: "Estrategia de ventas" },
+                    { value: "CURS_175", text: "Ética en los negocios" },
+                    { value: "CURS_176", text: "Ética profesional" },
+                    { value: "CURS_177", text: "Evaluación de créditos" },
+                    { value: "CURS_178", text: "Experiencia del cliente" },
+                    { value: "CURS_179", text: "Experiencias formativas 1" },
+                    { value: "CURS_180", text: "Experiencias formativas 2" },
+                    { value: "CURS_181", text: "Experiencias formativas 3" },
+                    { value: "CURS_182", text: "Experiencias formativas 4" },
+                    { value: "CURS_183", text: "Finanzas internacionales" },
+                    { value: "CURS_184", text: "Finanzas para la toma de decisiones" },
+                    { value: "CURS_185", text: "Flujos operativos comerciales" },
+                    { value: "CURS_186", text: "Fotografía" },
+                    { value: "CURS_187", text: "Formulación de estados financieros" },
+                    { value: "CURS_188", text: "Formación y desarrollo de personas" },
+                    { value: "CURS_189", text: "Fundamentos de la publicidad" },
+                    { value: "CURS_190", text: "Gestión aduanera" },
+                    { value: "CURS_191", text: "Gestión de almacenes" },
+                    { value: "CURS_192", text: "Gestión de la cadena de suministro" },
+                    { value: "CURS_193", text: "Gestión de créditos y cobranzas" },
+                    { value: "CURS_194", text: "Gestión de equipos" },
+                    { value: "CURS_195", text: "Gestión de equipos de marketing" },
+                    { value: "CURS_196", text: "Gestión de la calidad en comercio exterior" },
+                    { value: "CURS_197", text: "Gestión de la continuidad de servicios de TI" },
+                    { value: "CURS_198", text: "Gestión de costos" },
+                    { value: "CURS_199", text: "Gestión de indicadores de marketing y comercial" },
+                    { value: "CURS_200", text: "Gestión de la marca personal" },
+                    { value: "CURS_201", text: "Gestión de procesos de mejora continua" },
+                    { value: "CURS_202", text: "Gestión de procesos de negocios" },
+                    { value: "CURS_203", text: "Gestión de proveedores" },
+                    { value: "CURS_204", text: "Gestión de servicios de TI" },
+                    { value: "CURS_205", text: "Gestión empresarial basada en BI" },
+                    { value: "CURS_206", text: "Gestión y planeamiento tributario" },
+                    { value: "CURS_207", text: "Gobierno de TI" },
+                    { value: "CURS_208", text: "Guión audiovisual" },
+                    { value: "CURS_209", text: "Herramientas digitales para los negocios" },
+                    { value: "CURS_210", text: "Implementación de bases de datos" },
+                    { value: "CURS_211", text: "Implementación de soluciones innovadoras" },
+                    { value: "CURS_212", text: "Implementación de soluciones para plataformas móviles" },
+                    { value: "CURS_213", text: "Implementación de soluciones para plataformas multiusuario" },
+                    { value: "CURS_214", text: "Implementación de soluciones para plataformas web" },
+                    { value: "CURS_215", text: "Implementación de arquitectura de TI" },
+                    { value: "CURS_216", text: "Indicadores para RRHH" },
+                    { value: "CURS_217", text: "Inglés aplicado a proyectos empresariales" },
+                    { value: "CURS_218", text: "Inglés para la comunicación en los negocios" },
+                    { value: "CURS_219", text: "Inglés para los negocios internacionales" },
+                    { value: "CURS_220", text: "Innovación y diseño CX" },
+                    { value: "CURS_221", text: "Introducción a la investigación" },
+                    { value: "CURS_222", text: "Investigación aplicada" },
+                    { value: "CURS_223", text: "Investigación de mercado" },
+                    { value: "CURS_224", text: "Investigación de mercados" },
+                    { value: "CURS_225", text: "Leyes y normatividad publicitarias" },
+                    { value: "CURS_226", text: "Liderazgo estratégico" },
+                    { value: "CURS_227", text: "Marketing" },
+                    { value: "CURS_228", text: "Marketing estratégico" },
+                    { value: "CURS_229", text: "Marketing intelligence" },
+                    { value: "CURS_230", text: "Marketing internacional" },
+                    { value: "CURS_231", text: "Matemáticas aplicadas al desarrollo y soporte de sistemas" },
+                    { value: "CURS_232", text: "Medios digitales" },
+                    { value: "CURS_233", text: "Medios no tradicionales" },
+                    { value: "CURS_234", text: "Metodología cualitativa" },
+                    { value: "CURS_235", text: "Metodología cuantitativa" },
+                    { value: "CURS_236", text: "Metodologías ágiles para la innovación" },
+                    { value: "CURS_237", text: "Metodologías ágiles para la solución de problemas" },
+                    { value: "CURS_238", text: "Modelo de negocio" },
+                    { value: "CURS_239", text: "Modelo de negocios digitales" },
+                    { value: "CURS_240", text: "Modelo de soluciones basadas en servicio" },
+                    { value: "CURS_241", text: "Negociación comercial" },
+                    { value: "CURS_242", text: "Negociación estratégica" },
+                    { value: "CURS_243", text: "Nuevas tendencias en administración de empresas" },
+                    { value: "CURS_244", text: "Nuevas tendencias en contabilidad" },
+                    { value: "CURS_245", text: "Nuevas tendencias en gestión comercial" },
+                    { value: "CURS_246", text: "Nuevas tendencias en marketing" },
+                    { value: "CURS_247", text: "Nuevas tendencias en tecnologías de la información" },
+                ];
+
+                return cursos.map(curso => `
+                    <option value="${curso.value}" ${seleccionados.includes(curso.value) ? 'disabled' : ''}>
+                        ${curso.text}
+                    </option>
+                `).join('');
+            }
+        }
+
+        // Mostrar barra solo si hay contenido
+        barraOpciones.style.display = 'block';
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,293 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+<main class="container py-5">
+    <!-- Título del perfil -->
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold text-dark">Mi Perfil</h1>
+        <h2 class="fw-light">Bienvenido, <span class="text-uppercase text-primary">{{ usuario.first_name }}</span></h2>
+    </div>
+
+    <!-- Tarjeta de perfil -->
+    <div class="card shadow-lg mx-auto border-0" style="max-width: 700px;">
+        <div class="card-body p-4">
+            <!-- Título de la tarjeta -->
+            <h5 class="card-title text-center fw-bold text-secondary mb-4">Mis Datos</h5>
+
+            <!-- Información del usuario -->
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Nombre completo:</strong>
+                    <span class="text-uppercase text-muted">{{ usuario.get_full_name }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Correo electrónico:</strong>
+                    <span class="text-muted">{{ usuario.email }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Tipo de Usuario:</strong>
+                    <span class="badge bg-dark text-white text-uppercase">{{ tipo_usuario }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>DNI:</strong>
+                    <span class="text-muted">{{ usuario.perfil_mi.dni }}</span>
+                </li>
+                
+                <!-- Cursos para profesores -->
+                {% if tipo_usuario == "profesor(a)" %}
+                    <li class="list-group-item">
+                        <strong>Cursos que enseña:</strong>
+                        <ul>
+                            {% for curso in nombre_cursos %}
+                            <li><i class="bi bi-book-fill text-primary me-2"></i>{{ curso }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
+                    <li class="list-group-item">
+                        <strong>Retroalimentación del supervisor:</strong>
+                        <p class="text-muted">{{ retroalimentacion }}</p>
+                    </li>
+                    
+    
+                    <li class="list-group-item">
+                        <strong>Reportes de docente:</strong>
+                        {% for reporte in reportes_docente %}
+                            <ul>
+                                <li>
+                                    <a href="{{ reporte.archivo_pdf.url }}" target="_blank">{{ reporte.archivo_pdf.url|slice:"28:" }}</a>
+                                </li>
+                                {% comment %} <li>{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</li> {% endcomment %}
+                            </ul>
+                        {% empty %}
+                            <ul class="list-unstyled mt-2">
+                                <li colspan="3">No hay reportes de docentes disponibles.</li>
+                            </ul>
+                        {% endfor %}
+                    </li>
+    
+                    <li class="list-group-item">
+                        <strong>Reportes de clase:</strong>
+                        {% for reporte in reportes_clase %}
+                            <ul>
+                                <li>
+                                    <a href="{{ reporte.archivo_pdf.url }}" target="_blank">{{ reporte.archivo_pdf.url|slice:"26:" }}</a>
+                                </li>
+                                {% comment %} <li>{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</li> {% endcomment %}
+                            </ul>
+                        {% empty %}
+                            <ul>
+                                <li colspan="3">No hay reportes de clases disponibles.</li>
+                            </ul>
+                        {% endfor %}
+                    </li>
+
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        {% if tipo_usuario == "profesor(a)" %}
+                            <div id="lista-capacitaciones">
+                                <strong>Capacitaciones:</strong>
+                                {% if capacitaciones %}
+                                    {% for capacitacion in capacitaciones %}
+                                    <div class="mb-3 d-flex align-items-center">
+                                        <input type="text" name="capacitaciones[]" class="form-control me-2" value="{{ capacitacion }}" placeholder="Escribe el nombre de la capacitación" required>
+                                        <button type="button" class="btn btn-danger btn-sm btn-eliminar-capacitacion">Eliminar</button>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="mb-3 d-flex align-items-center">
+                                        <input type="text" name="capacitaciones[]" class="form-control me-2" placeholder="Escribe el nombre de la capacitación" required>
+                                        <button type="button" class="btn btn-danger btn-sm btn-eliminar-capacitacion">Eliminar</button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-center mt-2">
+                                <button type="button" id="btn-agregar-capacitacion" class="btn btn-secondary">Agregar otra capacitación</button>
+                            </div>
+                            
+                            {% comment %} <div class="form-group mt-3">
+                                <label for="numero_telefono"><strong>Celular:</strong></label>
+                                {{ form.numero_telefono }}
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="descripcion"><strong>Descripción:</strong></label>
+                                {{ form.descripcion }}
+                            </div> {% endcomment %}
+                            <button type="submit" class="btn btn-dark w-100 mt-4">Guardar Cambios</button>
+                            <div class="mt-5">
+                                <h3 class="text-secondary mb-3">Calificaciones de Alumnos:</h3>
+                                <div class="form-group mt-3">
+                                    <strong>Promedio general de las encuestas:</strong>
+                                    <span class="badge bg-dark text-white text-uppercase">{{ promedio_general }}</span>
+                                </div>
+                                {% if encuestas %}
+                                    {% for encuesta in encuestas %}
+                                    <div class="mb-4 p-3 border rounded bg-light shadow-sm">
+                                        <p><strong>Promedio de calificaciones:</strong> 
+                                            <span class="badge bg-success">{{ encuesta.promedio }}</span>
+                                            <small class="text-muted">Fecha: {{ encuesta.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                                        </p>
+                                        {% comment %} <p><strong>Comentario:</strong> {{ encuesta.comentario }}</p> {% endcomment %}
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted">No hay comentarios disponibles.</p>
+                                {% endif %}
+                            </div>
+                        {% comment %} {% elif tipo_usuario == "supervisor(a)" %}
+                            <div class="form-group mt-3">
+                                <label for="numero_telefono"><strong>Celular:</strong></label>
+                                {{ form.numero_telefono }}
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="descripcion"><strong>Descripción:</strong></label>
+                                {{ form.descripcion }}
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 mt-4">Guardar Cambios</button>
+                        {% else %}
+                            <div class="form-group mt-3">
+                                <label for="numero_telefono"><strong>Celular:</strong></label>
+                                {{ form.numero_telefono }}
+                            </div>
+                            <div class="form-group mt-3">
+                                <label for="descripcion"><strong>Descripción:</strong></label>
+                                {{ form.descripcion }}
+                            </div>
+                            <button type="submit" class="btn btn-dark w-100 mt-4">Guardar Cambios</button> {% endcomment %}
+                        {% endif %}
+                    </form>
+
+
+
+
+
+                {% endif %}
+                {% comment %} <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Reportes de clase:</strong>
+                    {% if perfil.pdf_reporte %}
+                        <a href="{{ perfil.pdf_reporte.url }}" class="btn btn-link" target="_blank">
+                            {{ perfil.pdf_reporte.url|slice:"19:" }}
+                        </a>
+                    {% else %}
+                        <p class="text-muted">No hay reporte disponible.</p>
+                    {% endif %}
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Reporte de docente:</strong>
+                    {% if perfil.pdf_reporte %}
+                        <a href="{{ perfil.pdf_reporte.url }}" class="btn btn-link" target="_blank">
+                            {{ perfil.pdf_reporte.url|slice:"19:" }}
+                        </a>
+                    {% else %}
+                        <p class="text-muted">No hay reporte disponible.</p>
+                    {% endif %}
+                </li> {% endcomment %}
+                
+            
+
+            <!-- Formulario -->
+            {% comment %} <form method="post" class="mt-4">
+                {% csrf_token %}
+                {% if tipo_usuario == "profesor(a)" %}
+                    <div id="lista-capacitaciones">
+                        {% if capacitaciones %}
+                            {% for capacitacion in capacitaciones %}
+                            <div class="mb-3 d-flex align-items-center">
+                                <input type="text" name="capacitaciones[]" class="form-control me-2" value="{{ capacitacion }}" placeholder="Escribe el nombre de la capacitación" required>
+                                <button type="button" class="btn btn-danger btn-sm btn-eliminar-capacitacion">Eliminar</button>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="mb-3 d-flex align-items-center">
+                                <input type="text" name="capacitaciones[]" class="form-control me-2" placeholder="Escribe el nombre de la capacitación" required>
+                                <button type="button" class="btn btn-danger btn-sm btn-eliminar-capacitacion">Eliminar</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <button type="button" id="btn-agregar-capacitacion" class="btn btn-secondary">Agregar otra capacitación</button>
+                    </div>
+                    <div class="form-group mt-3">
+                        <strong>Promedio general de las encuestas:</strong>
+                        <span class="badge bg-dark text-white text-uppercase">{{ promedio_general }}</span>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="numero_telefono"><strong>Celular:</strong></label>
+                        {{ form.numero_telefono }}
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="descripcion"><strong>Descripción:</strong></label>
+                        {{ form.descripcion }}
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 mt-4">Guardar Cambios</button>
+                    <div class="mt-5">
+                        <h3 class="text-secondary mb-3">Comentarios y Calificaciones de Alumnos:</h3>
+                        {% if encuestas %}
+                            {% for encuesta in encuestas %}
+                            <div class="mb-4 p-3 border rounded bg-light shadow-sm">
+                                <p><strong>Promedio de calificaciones:</strong> 
+                                    <span class="badge bg-success">{{ encuesta.promedio }}</span>
+                                </p>
+                                <p><strong>Comentario:</strong> {{ encuesta.comentario }}</p>
+                                <p><small class="text-muted">Fecha: {{ encuesta.fecha_creacion|date:"d/m/Y H:i" }}</small></p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No hay comentarios disponibles.</p>
+                        {% endif %}
+                    </div>
+                    <p>Promedio general de las encuestas: {{ promedio_general }}</p>
+                {% elif tipo_usuario == "supervisor(a)" %}
+                    <div class="form-group mt-3">
+                        <label for="numero_telefono"><strong>Celular:</strong></label>
+                        {{ form.numero_telefono }}
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="descripcion"><strong>Descripción:</strong></label>
+                        {{ form.descripcion }}
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 mt-4">Guardar Cambios</button>
+                {% else %}
+                    <div class="form-group mt-3">
+                        <label for="numero_telefono"><strong>Celular:</strong></label>
+                        {{ form.numero_telefono }}
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="descripcion"><strong>Descripción:</strong></label>
+                        {{ form.descripcion }}
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 mt-4">Guardar Cambios</button>
+                {% endif %}
+            </form> {% endcomment %}
+                
+            </ul>
+        </div>
+    </div>
+
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btnAgregarCapacitacion = document.getElementById('btn-agregar-capacitacion');
+        const listaCapacitaciones = document.getElementById('lista-capacitaciones');
+
+        if (btnAgregarCapacitacion) {
+            btnAgregarCapacitacion.addEventListener('click', function () {
+                const nuevaCapacitacion = document.createElement('div');
+                nuevaCapacitacion.classList.add('mb-3', 'd-flex', 'align-items-center');
+                nuevaCapacitacion.innerHTML = `
+                    <input type="text" name="capacitaciones[]" class="form-control me-2" placeholder="Escribe el nombre de la capacitación" required>
+                    <button type="button" class="btn btn-danger btn-sm btn-eliminar-capacitacion">Eliminar</button>
+                `;
+                listaCapacitaciones.appendChild(nuevaCapacitacion);
+            });
+
+            listaCapacitaciones.addEventListener('click', function (e) {
+                if (e.target && e.target.matches('.btn-eliminar-capacitacion')) {
+                    e.target.closest('div').remove();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

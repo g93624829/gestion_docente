@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de clase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0px;
+            font-size: 7px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .logrado {
+            background-color: #d4edda;
+        }
+
+        .proceso {
+            background-color: #fff3cd;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- tr fila y th es el numero de columnas -->
+    <table>
+        <tr class="section-title">
+            <td><img src="https://www.certus.edu.pe/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2021/10/logo-certus-1.png.webp"
+                    alt="Logo"></td>
+            <td>ACTA DE ACOMPAÑAMIENTO DOCENTE</td>
+            <td>VIRTUAL</td>
+        </tr>
+        <tr class="section-title" style="text-align: center;">
+            <td colspan="3">EVALUACION DEL DOCENTE</td>
+        </tr>
+        <tr class="section-title">
+            <td>Nombre del docente:</td>
+            <td colspan="2" class="text-uppercase">{{ nombre_docente }}</td>
+        </tr>
+        <tr class="section-title">
+            <td>DNI del docente:</td>
+            <td colspan="2">{{ dni }}</td>
+
+        </tr>
+        <tr class="section-title">
+            <td>Fecha:</td>
+            <td colspan="2">{{ fecha }}</td>
+
+        </tr>
+
+        <tr class="section-title">
+            <td>Ciclo:</td>
+            <td colspan="2">{{ ciclo }}</td>
+        </tr>
+
+        <!-- NOMBRES DEL OBSERVADOR -->
+        <tr class="section-title">
+            <td style="border: 1px solid #000000">Nombres del observador</td>
+            <td colspan="2" class="text-uppercase">{{ nombres_del_observador }}</td>
+        </tr>
+
+        <tr>
+            <th></th>
+            <th>Aspectos a Evaluar</th>
+            <th>Nivel Alcanzado</th>
+        </tr>
+        <!-- COMPROMISO PROFESIONAL -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">COMPROMISO PROFESIONAL</td>
+            <td>El profesor cumple con sus responsabilidades de manera puntual y efectiva</td>
+            <td>{{ pregunta_1 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>El profesor demuestra un nivel adecuado de preparación antes de las clases</td>
+            <td>{{ pregunta_2 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>El profesor mantiene una actitud proactiva para mejorar su enseñanza</td>
+            <td>{{ pregunta_3 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border: 1px solid #000000"></td>
+            <td>El profesor muestra compromiso con el aprendizaje y desarrollo profesional continuo</td>
+            <td>{{ pregunta_4 }}</td>
+        </tr>
+
+        <!-- HABILIDADES INTERPERSONALES -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">HABILIDADES INTERPERSONALES</td>
+            <td>El profesor se comunica de manera clara y efectiva con los estudiantes</td>
+            <td>{{ pregunta_5 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>El profesor está dispuesto a escuchar y tomar en cuenta las opiniones de los estudiantes</td>
+            <td>{{ pregunta_6 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>El profesor mantiene una relación respetuosa y cordial con los estudiantes</td>
+            <td>{{ pregunta_7 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border: 1px solid #000000"></td>
+            <td>El profesor sabe manejar situaciones conflictivas de manera apropiada</td>
+            <td>{{ pregunta_8 }}</td>
+        </tr>
+
+        <!-- ACTITUD Y CONDUCTA PROFESIONAL -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">ACTITUD Y CONDUCTA PROFESIONAL</td>
+            <td>El profesor mantiene un comportamiento ético y profesional en todo momento</td>
+            <td>{{ pregunta_9 }}</td>
+        </tr>
+
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>El profesor demuestra empatía y comprensión hacia los estudiantes</td>
+            <td>{{ pregunta_10 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>El profesor maneja adecuadamente su tiempo durante las clases y en sus interacciones con los estudiantes</td>
+            <td>{{ pregunta_11 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border: 1px solid #000000"></td>
+            <td>El profesor se presenta adecuadamente (vestimenta, actitud) en el entorno educativo</td>
+            <td>{{ pregunta_12 }}</td>
+        </tr>
+
+        <!-- EVALUACION GENERAL -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">EVALUACION GENERAL</td>
+            <td>El profesor cumple con las expectativas que se tienen de él como docente</td>
+            <td>{{ pregunta_13 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Es satisfactorio el modo en que el docente interactúa con los estudiantes</td>
+            <td>{{ pregunta_14 }}</td>
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #000000"></td>
+            <td>El profesor es un buen modelo a seguir para otros profesionales</td>
+            <td>{{ pregunta_15 }}</td>
+        </tr>
+
+
+        
+
+    </table>
+</body>
+
+</html>

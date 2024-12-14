@@ -1,0 +1,156 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+<main class="container py-5">
+    <!-- Título del perfil -->
+    <div class="text-center mb-4">
+        <h1 class="display-4 fw-bold text-dark">Perfil de <span class="text-uppercase text-primary">{{ usuario.first_name }}</span></h1>
+    </div>
+
+    <!-- Tarjeta de perfil -->
+    <div class="card shadow-lg mx-auto border-0" style="max-width: 600px;">
+        <div class="card-body bg-light rounded-3">
+            <!-- Título de la tarjeta -->
+            <h5 class="card-title text-center fw-bold text-secondary mb-4">Datos</h5>
+
+            <!-- Información del usuario -->
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Nombre completo:</strong>
+                    <span class="text-uppercase text-dark">{{ usuario.get_full_name }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Correo electrónico:</strong>
+                    <span class="text-dark">{{ usuario.email }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>Tipo de Usuario:</strong>
+                    <span class="badge bg-dark text-white text-uppercase">{{ tipo_usuario }}</span>
+                </li>
+                
+                {% if tipo_usuario_actual == "supervisor(a)" %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>DNI:</strong>
+                        <span class="text-dark text-uppercase">{{ usuario.perfil_mi.dni }}</span>
+                    </li>
+                    <!-- Cursos para supervisor -->
+                    <li class="list-group-item">
+                        <strong>Cursos:</strong>
+                        <ul>
+                            {% for curso in nombre_cursos %}
+                            <li><i class="bi bi-book-fill text-primary me-2"></i>{{ curso }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Capacitaciones:</strong>
+                        <ul>
+                            {% for capacitacion in capacitaciones %}
+                                <li><i class="bi bi-file-earmark-check text-success me-2"></i>{{ capacitacion }}</li>
+                            {% empty %}
+                                <li>No tiene capacitaciones registradas.</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
+                    <li class="list-group-item">
+                        <strong>Reportes de Docente:</strong>
+                        {% if reportes_docente %}
+                            <ul>
+                                {% for reporte in reportes_docente %}
+                                    <li>
+                                        <a href="{{ reporte }}" target="_blank">
+                                            {{ reporte|slice:"28:" }}
+                                        </a>
+                                        <small class="text-muted">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mt-2">No hay reportes de docentes disponibles.</p>
+                        {% endif %}
+                    </li>
+                    
+                    <li class="list-group-item">
+                        <strong>Reportes de Clase:</strong>
+                        {% if reportes_clase %}
+                            <ul>
+                                {% for reporte in reportes_clase %}
+                                    <li>
+                                        <a href="{{ reporte }}" target="_blank">
+                                            {{ reporte|slice:"26:" }}
+                                        </a>
+                                        <small class="text-muted">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mt-2">No hay reportes de clases disponibles.</p>
+                        {% endif %}
+                    </li>
+
+                    <li class="list-group-item">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="sugerencias"><strong>Retroalimentación del supervisor:</strong></label>
+                                <textarea id="sugerencias" name="retroalimentacion" class="form-control" rows="4" placeholder="Agregar"
+                                    required>{{ retroalimentacion }}</textarea>
+                            </div>
+
+                            <button class="btn btn-dark" type="submit">Enviar retroalimentación</button>
+
+
+                        </form>
+                    </li>
+
+                    <!-- Encuestas Recibidas -->
+                    <h4 class="mt-4 text-dark">Encuestas Recibidas:</h4>
+                    {% if encuestas %}
+                    <p><strong>Promedio de calificaciones:</strong> 
+                        <span class="badge bg-success">{{ promedio_general }}</span>
+                    </p>
+                        {% for encuesta in encuestas %}
+                            <div class="mb-4 p-3 border rounded bg-light shadow-sm">
+                                <p><strong>Promedio de calificaciones:</strong> 
+                                    <span class="badge bg-success">{{ encuesta.promedio }}</span>
+                                </p>
+                                <p><strong>Comentario:</strong> {{ encuesta.comentario }}</p>
+                                <p><small class="text-muted">Fecha de creación: {{ encuesta.fecha_creacion|date:"d/m/Y H:i" }}</small></p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No hay encuestas disponibles.</p>
+                    {% endif %}
+
+
+                    
+                    
+
+                {% else %}
+                    {% if tipo_usuario == "profesor(a)" %}
+                        {% comment %} <li class="list-group-item bg-light border-0">
+                            <strong>Cursos:</strong>
+                            <ul class="list-unstyled ms-3">
+                                {% for curso in nombre_cursos %}
+                                <li><i class="bi bi-book-fill text-primary me-2"></i>{{ curso }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li> {% endcomment %}
+                    {% elif tipo_usuario == "alumno(a)" %}
+                        <!-- Carrera para alumnos -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <strong>Carrera:</strong>
+                            <span class="text-dark text-uppercase">{{ nombre_carrera }}</span>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center mb-4" style="margin-top: 30px">
+        <a class="btn btn-dark btn-lg" href="{% url 'pagina_principal' %}">Volver</a>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de clase</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0px;
+            font-size: 7px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .logrado {
+            background-color: #d4edda;
+        }
+
+        .proceso {
+            background-color: #fff3cd;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- tr fila y th es el numero de columnas -->
+    <table>
+        <tr class="section-title">
+            <td><img src="https://www.certus.edu.pe/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2021/10/logo-certus-1.png.webp"
+                    alt="Logo"></td>
+            <td>ACTA DE ACOMPAÑAMIENTO DOCENTE</td>
+            <td>VIRTUAL</td>
+        </tr>
+        <tr class="section-title" style="text-align: center;">
+            <td colspan="3">DATOS DE LA CLASE OBSERVADA</td>
+        </tr>
+        <tr class="section-title">
+            <td>Nombre del docente:</td>
+            <td colspan="2" class="text-uppercase">{{ nombre_docente }}</td>
+        </tr>
+        <tr class="section-title">
+            <td>DNI del docente:</td>
+            <td colspan="2">{{ dni }}</td>
+
+        </tr>
+        <tr class="section-title">
+            <td>Fecha:</td>
+            <td colspan="2">{{ fecha }}</td>
+
+        </tr>
+        <tr class="section-title">
+            <td>Unidad Didáctica:</td>
+            <td colspan="2" class="text-uppercase">{{ unidad_didactica }}</td>
+
+        </tr>
+        <tr class="section-title">
+            <td>Ciclo:</td>
+            <td colspan="2">{{ ciclo }}</td>
+
+        </tr>
+
+        <tr>
+            <th></th>
+            <th>Aspectos a Evaluar</th>
+            <th>Nivel Alcanzado</th>
+        </tr>
+        <!-- ASPECTO TECNOLOGICO -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Presenta sesión sin ninguna interferencia de audio y/o video.</td>
+            {% if pregunta_1 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_1 }}</td>
+            {% elif pregunta_1 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_1 }}</td>
+            {% elif pregunta_1 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_1 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Activa audio y cámara de video permanentemente durante toda la sesión.</td>
+            {% if pregunta_2 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_2 }}</td>
+            {% elif pregunta_2 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_2 }}</td>
+            {% elif pregunta_2 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_2 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">ASPECTO TECNOLÓGICO</td>
+            <td>Incluye videos, PPTs actualizadas, páginas, aplicaciones y herramientas digitales.</td>
+            {% if pregunta_3 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_3 }}</td>
+            {% elif pregunta_3 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_3 }}</td>
+            {% elif pregunta_3 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_3 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Utiliza herramientas del BBB como encuestas, salas, pizarra, chat y block de notas.</td>
+            {% if pregunta_4 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_4 }}</td>
+            {% elif pregunta_4 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_4 }}</td>
+            {% elif pregunta_4 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_4 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #000000"></td>
+            <td>Duración de grabación de sesión evaluada corresponde a la cantidad de minutos asignados a la misma.</td>
+            {% if pregunta_5 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_5 }}</td>
+            {% elif pregunta_5 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_5 }}</td>
+            {% elif pregunta_5 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_5 }}</td>
+            {% endif %}
+        </tr>
+
+        <!-- PLANIFICACIÓN Y EJECUCION DE LA CLASE -->
+        <tr class="section-title">
+            <td style="border: 1px solid #000000">PLANIFICACIÓN Y EJECUCION DE LA CLASE</td>
+            <td>Emplea diferentes materiales didácticos (casos, noticias, lecturas, experiencias, etc) para el
+                desarrollo de la sesión.</td>
+            {% if pregunta_6 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_6 }}</td>
+            {% elif pregunta_6 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_6 }}</td>
+            {% elif pregunta_6 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_6 }}</td>
+            {% endif %}
+        </tr>
+
+        <!-- LIDERAZGO DOCENTE EN AULA -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Su presentación personal es adecuada (vestimenta, tono de voz, lenguaje no verbal y actitud).</td>
+            {% if pregunta_7 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_7 }}</td>
+            {% elif pregunta_7 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_7 }}</td>
+            {% elif pregunta_7 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_7 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">LIDERAZGO DOCENTE EN AULA</td>
+            <td>Evidencia acuerdos de convivencia con los estudiantes (orden en el ingreso de estudiantes a clase,
+                invtervenciones, etc), mostrando autoridad y manejo de grupo.</td>
+            {% if pregunta_8 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_8 }}</td>
+            {% elif pregunta_8 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_8 }}</td>
+            {% elif pregunta_8 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_8 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border: 1px solid #000000"></td>
+            <td>Genera un clima de confianza y respeto en la relación con el estudiante.</td>
+            {% if pregunta_9 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_9 }}</td>
+            {% elif pregunta_9 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_9 }}</td>
+            {% elif pregunta_9 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_9 }}</td>
+            {% endif %}
+        </tr>
+
+        <!-- GESTIÓN DEL VÍNCULO CON EL ESTUDIANTE -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Promueve la participación activa del estudiante proponiendo actividades que fomentan la interacción en
+                espacios de trabajo colaborativo.</td>
+            {% if pregunta_10 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_10 }}</td>
+            {% elif pregunta_10 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_10 }}</td>
+            {% elif pregunta_10 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_10 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">GESTIÓN DEL VÍNCULO CON EL ESTUDIANTE</td>
+            <td>Verifica el aprendizaje y la comprensión a través de preguntas y/o actividades breves que involucran a
+                todos los estudiantes.</td>
+            {% if pregunta_11 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_11 }}</td>
+            {% elif pregunta_11 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_11 }}</td>
+            {% elif pregunta_11 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_11 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Muestra apertura a las consultas de los estudiantes respondiendolas oportunamente.</td>
+            {% if pregunta_12 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_12 }}</td>
+            {% elif pregunta_12 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_12 }}</td>
+            {% elif pregunta_12 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_12 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border: 1px solid #000000"></td>
+            <td>Personaliza la interacción llamando a los estudiantes por sus nombres retroalimentando positivamente sus
+                intervenciones.</td>
+            {% if pregunta_13 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_13 }}</td>
+            {% elif pregunta_13 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_13 }}</td>
+            {% elif pregunta_13 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_13 }}</td>
+            {% endif %}
+        </tr>
+
+        <!-- DESARROLLO DE COMPETENCIAS DEL ESTUDIANTE -->
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000"></td>
+            <td>Promueve la reflexión y la actitud crítica respecto al tema desarrollado.</td>
+            {% if pregunta_14 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_14 }}</td>
+            {% elif pregunta_14 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_14 }}</td>
+            {% elif pregunta_14 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_14 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000">DESARROLLO DE COMPETENCIAS DEL
+                ESTUDIANTE</td>
+            <td>Aplica la teoría situaciones reales mediante casos, problemas prácticos de acuerdo cno el contexto
+                profesional.</td>
+            {% if pregunta_15 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_15 }}</td>
+            {% elif pregunta_15 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_15 }}</td>
+            {% elif pregunta_15 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_15 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border-bottom: 1px solid #00000000; padding: 0px; margin-bottom: 10px"></td>
+            <td>Planifica actividades orientadas al logro del objetivo de acuerdo al momento de la sesión (inicio:
+                CONECTAR proceso: CONSTRUIR y/o cierre: REFLEXIONAR).</td>
+            {% if pregunta_16 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_16 }}</td>
+            {% elif pregunta_16 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_16 }}</td>
+            {% elif pregunta_16 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_16 }}</td>
+            {% endif %}
+        </tr>
+        <tr class="section-title">
+            <td style="border: 1px solid #000000"></td>
+            <td>Evidencia uso de instrumentos(s) de medición de niveles de desempeño y explica criterios de evaluación
+                de manera adecuada.</td>
+            {% if pregunta_17 == 'LOGRADO' %}
+            <td style="background-color: rgba(0, 128, 0, 0.400);">{{ pregunta_17 }}</td>
+            {% elif pregunta_17 == 'PROCESO' %}
+            <td style="background-color: rgba(255, 255, 0, 0.400)">{{ pregunta_17 }}</td>
+            {% elif pregunta_17 == 'FALLIDO' %}
+            <td style="background-color: rgba(255, 0, 0, 0.400)">{{ pregunta_17 }}</td>
+            {% endif %}
+        </tr>
+
+        <!-- NOMBRES DEL OBSERVADOR -->
+        <tr class="section-title">
+            <td style="border: 1px solid #000000">Nombres del observador</td>
+            <td colspan="2" class="text-uppercase">{{ nombres_del_observador }}</td>
+        </tr>
+
+        <!-- SUGERENCIAS DEL OBSERVADOR -->
+        <tr class="section-title">
+            <td colspan="3" style="border: 1px solid #000000">SUGERENCIAS DEL OBSERVADOR</td>
+        </tr>
+        <tr class="section-title">
+            <td colspan="3" style="border: 1px solid #000000">
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                {{ sugerencias_del_observador }}
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

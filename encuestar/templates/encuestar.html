@@ -1,0 +1,144 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="card shadow border-0 rounded-4">
+    <!-- Encabezado del formulario -->
+    <div class="card-header bg-dark text-white text-center py-4">
+      <h1 class="h4 mb-0 fw-bold">Encuesta Docente</h1>
+    </div>
+
+    {% if tipo_usuario == "profesor(a)" %}
+      <div class="card-body">
+        <p>
+          En el sistema de encuestas, solo los alumnos tienen permitido evaluar a los docentes para garantizar que las evaluaciones reflejen la experiencia directa del estudiante con sus profesores. Esta regla evita conflictos de interés y asegura que los resultados de las encuestas sean relevantes para mejorar la calidad de enseñanza desde la perspectiva estudiantil. Por lo tanto, los docentes no tienen la posibilidad de evaluar a otros docentes.
+        </p>
+        <a class="btn btn-dark btn-lg" href="{% url 'pagina_principal' %}">Volver</a>
+      </div>
+    {% elif tipo_usuario == "alumno(a)" %}
+      {% if mensaje %}
+        <div class="alert alert-success" role="alert">
+          {{ mensaje }}
+        </div>
+      {% endif %}
+
+      <div class="card-body bg-light p-4">
+        <p class="text-dark mb-4">
+          ¡Hola! Queremos conocer la experiencia de aprendizaje que tienes con tu docente en este curso. 
+          <strong>1 es totalmente en desacuerdo</strong> y <strong>5 es totalmente de acuerdo</strong>.
+        </p>
+
+        <!-- Formulario -->
+        <form method="post" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <div class="mb-4">
+            <label>Alumno:</label>
+            <p class="text-uppercase">{{ usuario_actual.username }}</p>
+          </div>
+
+          {% comment %} <div class="mb-3">
+            <label for="opciones_docentes">Docente a encuestar:</label>
+            <select id="opciones_docentes" name="docente" class="form-select" required>
+              <option value="">--SELECCIONAR DOCENTE--</option>
+              {% for profesor in profesores %}
+                <option class="text-uppercase" value="{{ profesor.user.id }}">{{ profesor.nombre_completo }}</option>
+              {% empty %}
+                <option value="">No hay profesores registrados</option>
+              {% endfor %}
+            </select>
+          </div> {% endcomment %}
+          <div class="mb-3">
+            <label for="profesor">Selecciona un Docente:</label>
+            <select name="profesor" id="profesor" class="form-select" required>
+                {% for profesor in profesores %}
+                    {% if profesor.id == profesor_encuestado %}
+                        <option class="text-uppercase" value="{{ profesor.id }}" disabled>{{ profesor.nombre_completo|upper }}</option>
+                    {% else %}
+                        <option class="text-uppercase" value="{{ profesor.id }}">{{ profesor.nombre_completo|upper }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+          </div>
+
+          <!-- Pregunta 1 -->
+          <div class="mb-4">
+            <label for="pregunta1" class="form-label fw-semibold">
+              01 ) Durante las clases, mi profesor demuestra interés y pasión por enseñar. <span class="text-danger">*</span>
+            </label>
+            <div id="pregunta1" class="d-flex justify-content-between align-items-center">
+              {% for i in "12345" %}
+              <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="pregunta1" id="pregunta1_opcion{{ i }}" value="{{ i }}" required>
+                <label class="form-check-label" for="pregunta1_opcion{{ i }}">{{ i }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Pregunta 2 -->
+          <div class="mb-4">
+            <label for="pregunta2" class="form-label fw-semibold">
+              02 ) Las clases con mi profesor me motivan a seguir aprendiendo. <span class="text-danger">*</span>
+            </label>
+            <div id="pregunta2" class="d-flex justify-content-between align-items-center">
+              {% for i in "12345" %}
+              <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="pregunta2" id="pregunta2_opcion{{ i }}" value="{{ i }}" required>
+                <label class="form-check-label" for="pregunta2_opcion{{ i }}">{{ i }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Pregunta 3 -->
+          <div class="mb-4">
+            <label for="pregunta3" class="form-label fw-semibold">
+              03 ) Mi profesor se interesa por mi aprendizaje. <span class="text-danger">*</span>
+            </label>
+            <div id="pregunta3" class="d-flex justify-content-between align-items-center">
+              {% for i in "12345" %}
+              <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="pregunta3" id="pregunta3_opcion{{ i }}" value="{{ i }}" required>
+                <label class="form-check-label" for="pregunta3_opcion{{ i }}">{{ i }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Pregunta 4 -->
+          <div class="mb-4">
+            <label for="pregunta4" class="form-label fw-semibold">
+              04 ) Mi profesor escucha y responde a mis preguntas con claridad y respeto durante clases. <span class="text-danger">*</span>
+            </label>
+            <div id="pregunta4" class="d-flex justify-content-between align-items-center">
+              {% for i in "12345" %}
+              <div class="form-check form-check-inline">
+                <input type="radio" class="form-check-input" name="pregunta4" id="pregunta4_opcion{{ i }}" value="{{ i }}" required>
+                <label class="form-check-label" for="pregunta4_opcion{{ i }}">{{ i }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Pregunta 5 (Texto) -->
+          <div class="mb-4">
+            <label for="pregunta5" class="form-label fw-semibold">
+              05 ) ¿Cómo es tu experiencia de aprendizaje con este profesor? <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control shadow-sm" id="pregunta5" name="pregunta5" rows="4" placeholder="Escribe tu respuesta aquí..." required></textarea>
+          </div>
+
+          <!-- Botón de envío -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-dark px-5 py-2 fw-bold">Enviar Encuesta</button>
+          </div>
+        </form>
+      </div>
+    {% else %}
+      <div class="card-body">
+        <p class="text-start">Tipo de usuario no definido.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

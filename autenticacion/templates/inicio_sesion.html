@@ -1,0 +1,36 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+
+<main class="container">
+    <div class="row justify-content-center">
+        <section class="col-md-6 col-lg-4 mt-5">
+            <form method="POST" class="card card-body">
+                <h1 class="text-center mb-4">Iniciar sesión</h1>
+
+                <strong class="text-danger d-block mb-3">{{ error }}</strong>
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Usuario:</label>
+                    <input required type="text" name="email" class="form-control" placeholder="Usuario" id="email">
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña:</label>
+                    <input required type="password" name="password" class="form-control" placeholder="Contraseña" id="password">
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-dark" type="submit">
+                        Iniciar sesión
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+
+{% endblock content %}

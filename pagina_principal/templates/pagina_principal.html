@@ -1,0 +1,144 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1 class="my-5 display-4 fw-bold text-dark">
+        GESTIÓN DOCENTE CERTUS
+    </h1>
+
+    {% if user.is_authenticated %}
+        <p class="mt-4 fs-3">
+            Bienvenido(a), <span class="text-dark">{{ tipo_usuario }}</span> <span class="fw-bold text-uppercase">{{ user.first_name }}</span>
+        </p>
+        <p class="lead text-muted">
+            ¡Nos alegra verte de nuevo!
+        </p>
+        <p class="text-start">
+            Desde aquí podrás gestionar tus datos, consultar tu horario, interactuar con estudiantes y acceder a herramientas diseñadas para facilitar tu trabajo diario. Estamos comprometidos en brindarte el apoyo necesario para que tu labor educativa sea más eficiente y enriquecedora. ¡Explora todas las funcionalidades y mantente al tanto de tus actividades académicas!
+        </p>
+        <div class="table-responsive my-4">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Nombres</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Tipo de Usuario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if tipo_usuario == "profesor(a)" %}
+                        {% for usuario in usuarios %}
+                            {% if usuario.perfil_mi.tipo_usuario == 'alumno(a)'%}
+                                <tr>
+                                    <td class="text-uppercase fw-bold">
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none text-dark">
+                                            {{ usuario.username }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none text-dark">
+                                            {{ usuario.email }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none">
+                                            <span class="badge bg-primary text-uppercase">
+                                                {{ usuario.perfil_mi.tipo_usuario }}
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">No hay perfiles disponibles.</td>
+                            </tr>
+                        {% endfor %}
+                    {% elif tipo_usuario == "alumno(a)" %}
+                        <div class="mb-4">
+                            <a href="{% url 'encuestar' %}" class="btn btn-dark">Encuestar Docentes</a>
+                        </div>
+                        {% for usuario in usuarios %}
+                            {% if usuario.perfil_mi.tipo_usuario == 'profesor(a)'%}
+                                <tr>
+                                    <td class="text-uppercase fw-bold">
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none text-dark">
+                                            {{ usuario.username }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none text-dark">
+                                            {{ usuario.email }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none">
+                                            <span class="badge bg-primary text-uppercase">
+                                                {{ usuario.perfil_mi.tipo_usuario }}
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">No hay perfiles disponibles.</td>
+                            </tr>
+                        {% endfor %}
+                    
+                    {% elif tipo_usuario == "supervisor(a)" %}
+                        <div class="mb-4">
+                            <a href="{% url 'crear_cuenta' %}" class="btn btn-dark">Crear Cuentas</a>
+                            <a href="{% url 'reporte_clase' %}" class="btn btn-dark">Generar Reporte de Clase</a>
+                            <a href="{% url 'reporte_docente' %}" class="btn btn-dark">Generar Reporte de Rendimiento del Docente</a>
+                        </div>
+                        {% for usuario in usuarios %}
+                            {% if usuario.perfil_mi %}
+                                <tr>
+                                    <td class="text-uppercase fw-bold">
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none text-dark">
+                                            {{ usuario.username }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none text-dark">
+                                            {{ usuario.email }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'perfil_usuario' usuario.id %}" class="text-decoration-none">
+                                            <span class="badge bg-primary text-uppercase">
+                                                {{ usuario.perfil_mi.tipo_usuario }}
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">No hay perfiles disponibles.</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                    <div class="mb-4">
+                        <a href="{% url 'crear_cuenta' %}" class="btn btn-dark">Crear Cuentas</a>
+                    </div>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+    {% else %}
+        <p class="lead text-muted">
+            Bienvenidos a la plataforma de Gestión de Docentes de Instituto Certus
+        </p>
+        <p>
+            Nos complace darles la bienvenida a nuestra plataforma, creada para apoyar a nuestros docentes en su labor educativa. ¡Estamos aquí para apoyarles en cada paso de su camino académico!
+        </p>
+        <div class="mt-4">
+            <a class="btn btn-dark btn-lg me-3" href="{% url 'inicio_sesion' %}">Iniciar Sesión</a>
+            {% comment %} <a class="btn btn-outline-secondary btn-lg" href="{% url 'crear_cuenta' %}">Crear Cuenta</a> {% endcomment %}
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

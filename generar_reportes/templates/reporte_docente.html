@@ -1,0 +1,351 @@
+{% extends "header-footer.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+    <h1 class="text-center mb-4">Formulario de Evaluación del Profesor</h1>
+    <form class="card shadow p-4 bg-white" action="" method="POST">
+        {% csrf_token %}
+        {% if messages %}
+        <div class="alert alert-success" role="alert">
+            <ul class="list-unstyled mb-0">
+                {% for message in messages %}
+                <li class="mb-2 text-uppercase">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="profesor">Selecciona un Docente:</label>
+            <select name="profesor" id="profesor" class="form-select" required>
+                <option value="" selected disabled>Selecciona un docente</option>
+                {% for profesor in profesores %}
+                <option value="{{ profesor.id }}" data-dni="{{ profesor.dni }}"
+                    data-cursos="{% for curso in profesor.cursos.all %}{{ curso.nombre_curso }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                    {{ profesor.nombre_completo|upper }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="dni" class="form-label">DNI:</label>
+            <input type="text" id="dni" name="DNI" class="form-control" pattern="\d{8}" maxlength="8"
+                title="Debe ser un DNI de 8 dígitos" required readonly>
+        </div>
+
+        <div class="mb-3">
+            <label for="ciclo" class="form-label">Ciclo:</label>
+            <select id="ciclo" name="CICLO" class="form-control" required>
+                <option value="" selected disabled>Selecciona un ciclo...</option>
+                <option value="I">I</option>
+                <option value="II">II</option>
+                <option value="III">III</option>
+                <option value="IV">IV</option>
+                <option value="V">V</option>
+                <option value="VI">VI</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="nombre_supervisor" class="form-label">Nombre del Supervisor:</label>
+            <input type="text" id="nombre_supervisor" name="NOMBRE_DEL_SUPERVISOR" 
+                   class="form-control text-uppercase" value="{{ usuario_actual }}" readonly required>
+        </div>
+
+        <div class="mb-3">
+            <p>1. ¿El profesor cumple con sus responsabilidades de manera puntual y efectiva?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_1" id="responsabilidades_si"
+                    value="Sí" required>
+                <label class="form-check-label" for="responsabilidades_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_1" id="responsabilidades_no"
+                    value="No">
+                <label class="form-check-label" for="responsabilidades_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_1" id="responsabilidades_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="responsabilidades_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>2. ¿El profesor demuestra un nivel adecuado de preparación antes de las clases?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_2" id="preparacion_si" value="Sí" required>
+                <label class="form-check-label" for="preparacion_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_2" id="preparacion_no" value="No">
+                <label class="form-check-label" for="preparacion_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_2" id="preparacion_aveces" value="A veces">
+                <label class="form-check-label" for="preparacion_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>3. ¿El profesor mantiene una actitud proactiva para mejorar su enseñanza?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_3" id="actitud_proactiva_si"
+                    value="Sí" required>
+                <label class="form-check-label" for="actitud_proactiva_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_3" id="actitud_proactiva_no"
+                    value="No">
+                <label class="form-check-label" for="actitud_proactiva_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_3" id="actitud_proactiva_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="actitud_proactiva_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>4. ¿El profesor muestra compromiso con el aprendizaje y desarrollo profesional continuo?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_4" id="compromiso_si" value="Sí" required>
+                <label class="form-check-label" for="compromiso_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_4" id="compromiso_no" value="No">
+                <label class="form-check-label" for="compromiso_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_4" id="compromiso_aveces" value="A veces">
+                <label class="form-check-label" for="compromiso_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>5. ¿El profesor se comunica de manera clara y efectiva con los estudiantes?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_5" id="comunicacion_si" value="Sí"
+                    required>
+                <label class="form-check-label" for="comunicacion_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_5" id="comunicacion_no" value="No">
+                <label class="form-check-label" for="comunicacion_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_5" id="comunicacion_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="comunicacion_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>6. ¿El profesor está dispuesto a escuchar y tomar en cuenta las opiniones de los estudiantes?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_6" id="escucha_si" value="Sí" required>
+                <label class="form-check-label" for="escucha_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_6" id="escucha_no" value="No">
+                <label class="form-check-label" for="escucha_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_6" id="escucha_aveces" value="A veces">
+                <label class="form-check-label" for="escucha_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>7. ¿El profesor mantiene una relación respetuosa y cordial con los estudiantes?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_7" id="respeto_si" value="Sí" required>
+                <label class="form-check-label" for="respeto_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_7" id="respeto_no" value="No">
+                <label class="form-check-label" for="respeto_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_7" id="respeto_aveces" value="A veces">
+                <label class="form-check-label" for="respeto_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>8. ¿El profesor sabe manejar situaciones conflictivas de manera apropiada?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_8" id="manejo_conflictos_si"
+                    value="Sí" required>
+                <label class="form-check-label" for="manejo_conflictos_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_8" id="manejo_conflictos_no"
+                    value="No">
+                <label class="form-check-label" for="manejo_conflictos_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_8" id="manejo_conflictos_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="manejo_conflictos_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>9. ¿El profesor mantiene un comportamiento ético y profesional en todo momento?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_9" id="etica_si" value="Sí" required>
+                <label class="form-check-label" for="etica_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_9" id="etica_no" value="No">
+                <label class="form-check-label" for="etica_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_9" id="etica_aveces" value="A veces">
+                <label class="form-check-label" for="etica_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>10. ¿El profesor demuestra empatía y comprensión hacia los estudiantes?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_10" id="empatia_si" value="Sí" required>
+                <label class="form-check-label" for="empatia_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_10" id="empatia_no" value="No">
+                <label class="form-check-label" for="empatia_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_10" id="empatia_aveces" value="A veces">
+                <label class="form-check-label" for="empatia_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>11. ¿El profesor maneja adecuadamente su tiempo durante las clases y en sus interacciones con los
+                estudiantes?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_11" id="gestion_tiempo_si" value="Sí"
+                    required>
+                <label class="form-check-label" for="gestion_tiempo_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_11" id="gestion_tiempo_no" value="No">
+                <label class="form-check-label" for="gestion_tiempo_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_11" id="gestion_tiempo_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="gestion_tiempo_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>12. ¿El profesor se presenta adecuadamente (vestimenta, actitud) en el entorno educativo?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_12" id="presentacion_si" value="Sí"
+                    required>
+                <label class="form-check-label" for="presentacion_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_12" id="presentacion_no" value="No">
+                <label class="form-check-label" for="presentacion_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_12" id="presentacion_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="presentacion_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>13. ¿El profesor cumple con las expectativas que se tienen de él como docente?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_13" id="expectativas_si" value="Sí"
+                    required>
+                <label class="form-check-label" for="expectativas_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_13" id="expectativas_no" value="No">
+                <label class="form-check-label" for="expectativas_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_13" id="expectativas_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="expectativas_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>14. ¿Es satisfactorio el modo en que el docente interactúa con los estudiantes?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_14" id="satisfaccion_si" value="Sí"
+                    required>
+                <label class="form-check-label" for="satisfaccion_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_14" id="satisfaccion_no" value="No">
+                <label class="form-check-label" for="satisfaccion_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_14" id="satisfaccion_aveces"
+                    value="A veces">
+                <label class="form-check-label" for="satisfaccion_aveces">A veces</label>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <p>15. ¿El profesor es un buen modelo a seguir para otros profesionales?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_15" id="modelo_si" value="Sí" required>
+                <label class="form-check-label" for="modelo_si">Sí</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_15" id="modelo_no" value="No">
+                <label class="form-check-label" for="modelo_no">No</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="pregunta_15" id="modelo_aveces" value="A veces">
+                <label class="form-check-label" for="modelo_aveces">A veces</label>
+            </div>
+        </div>
+
+        <button type="submit">Enviar Evaluación</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('profesor').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        
+        // Obtén el DNI y los cursos
+        const dni = selectedOption.getAttribute('data-dni');
+        // const cursos = selectedOption.getAttribute('data-cursos').split(',').map(curso => curso.trim());
+    
+        // Asigna el DNI
+        document.getElementById('dni').value = dni || '';
+    
+        // Actualiza el select de cursos
+        //const cursosSelect = document.getElementById('cursos');
+        //cursosSelect.innerHTML = '<option value="" selected disabled>Selecciona un curso</option>';
+    
+        //if (cursos.length > 0 && cursos[0] !== '') {
+        //    cursos.forEach((curso, index) => {
+        //        const option = document.createElement('option');
+        //        option.value = index;  // Usa el índice como valor temporal
+        //        option.textContent = curso;  // Solo muestra el nombre del curso
+        //        cursosSelect.appendChild(option);
+        //    });
+        //} else {
+        //    const option = document.createElement('option');
+        //    option.value = "";
+        //    option.textContent = "Sin cursos asignados";
+        //    cursosSelect.appendChild(option);
+        //}
+    });
+</script>
+{% endblock %}
