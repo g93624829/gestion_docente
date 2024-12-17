@@ -9,19 +9,12 @@ from django.http import Http404
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from webdriver_manager.firefox import GeckoDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 from .models import *
 from .forms import *
@@ -359,75 +352,7 @@ def crear_cuenta(request):
     return render(request, 'crear_cuenta.html', {'form': UserCreationForm()})
 
 
-# def validate_dni(dni):
-#     # Verificar si el DNI tiene 8 dígitos y es numérico
-#     if len(dni) != 8 or not dni.isdigit():
-#         return False, "DNI inválido: debe tener 8 dígitos"
-
-#     # Configuración de Selenium para buscar el DNI en eldni.com
-#     chrome_options = Options()
-#     # Modo headless para evitar mostrar el navegador
-#     chrome_options.add_argument("--headless")
-#     chrome_options.add_argument("--disable-gpu")
-#     chrome_options.add_argument("--no-sandbox")
-#     chrome_options.add_argument("--disable-dev-shm-usage")
-#     chrome_options.add_argument(
-#         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-
-#     driver = None
-#     try:
-#         # Inicializar el navegador
-#         driver = webdriver.Chrome(options=chrome_options)
-#         driver.get('https://eldni.com/')
-
-#         # Esperar hasta que el campo de DNI esté disponible
-#         WebDriverWait(driver, 10).until(
-            # EC.presence_of_element_located((By.ID, 'dni'))
-    #     )
-
-    #     # Ingresar el DNI y realizar la búsqueda
-    #     dni_input = driver.find_element(By.ID, 'dni')
-    #     dni_input.clear()
-    #     dni_input.send_keys(dni)
-
-    #     btn_buscar = WebDriverWait(driver, 10).until(
-    #         EC.element_to_be_clickable((By.ID, 'btn-buscar-datos-por-dni'))
-    #     )
-    #     btn_buscar.click()
-
-    #     # Esperar a que los datos sean cargados en la página
-    #     WebDriverWait(driver, 10).until(
-    #         EC.presence_of_element_located((By.ID, 'nombres'))
-    #     )
-
-    #     # Extraer el contenido de la página
-    #     response = driver.page_source
-    #     soup = BeautifulSoup(response, 'html.parser')
-
-    #     # Extraer los datos del formulario
-    #     apellidop = soup.find('input', {'id': 'apellidop'})['value'].strip()
-    #     apellidom = soup.find('input', {'id': 'apellidom'})['value'].strip()
-    #     nombres = soup.find('input', {'id': 'nombres'})['value'].strip()
-
-    #     # Verificar que los datos se hayan obtenido correctamente
-    #     if not (apellidop and apellidom and nombres):
-    #         return False, "No se encontraron datos válidos para el DNI ingresado"
-
-    #     nombre_lista_reniec = [apellidop, apellidom, nombres]
-    #     print(f"Datos extraídos: {nombre_lista_reniec}")
-    #     return True, nombre_lista_reniec
-
-    # except Exception as e:
-    #     print(f"Error al validar DNI: {e}")
-    #     return False, "Ocurrió un error al validar el DNI"
-
-    # finally:
-    #     if driver:
-    #         driver.quit()
-
-
-
-def validate_dni(dni): 
+def validate_dni(dni):
     # Verificar si el DNI tiene 8 dígitos y es numérico
     if len(dni) != 8 or not dni.isdigit():
         return False, "DNI inválido: debe tener 8 dígitos"
@@ -442,16 +367,10 @@ def validate_dni(dni):
     chrome_options.add_argument(
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 
-    # Ruta a chromedriver
-    chromedriver_path = '/usr/bin/chromedriver'
-
-    # Inicializar el servicio de ChromeDriver
-    service = Service(executable_path=chromedriver_path)
-
     driver = None
     try:
-        # Inicializar el navegador con el servicio y las opciones
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        # Inicializar el navegador
+        driver = webdriver.Chrome(options=chrome_options)
         driver.get('https://eldni.com/')
 
         # Esperar hasta que el campo de DNI esté disponible
@@ -498,7 +417,6 @@ def validate_dni(dni):
     finally:
         if driver:
             driver.quit()
-
 
 
 
