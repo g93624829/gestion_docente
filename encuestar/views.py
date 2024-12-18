@@ -20,8 +20,6 @@ def encuestar(request):
 
     if request.method == "POST":
         profesor_id = request.POST.get('profesor')  # Cambié 'docente' por 'profesor'
-        print("ID del usuario (profesor_id):", profesor_id)
-        print("Respuestas:", request.POST.get('pregunta1'), request.POST.get('pregunta2'), request.POST.get('pregunta3'), request.POST.get('pregunta4'), request.POST.get('pregunta5'))
 
         # Verificar si alguna pregunta está vacía
         pregunta1 = request.POST.get('pregunta1')
@@ -44,7 +42,6 @@ def encuestar(request):
             # Buscar al Profesor usando el profesor_id
             profesor = Profesor.objects.get(id=profesor_id)
         except Profesor.DoesNotExist:
-            print(f"No se encontró el profesor con id {profesor_id}")
             mensaje = "Profesor no encontrado"
             return render(request, 'encuestar.html', {
                 'mensaje': mensaje,
@@ -57,7 +54,6 @@ def encuestar(request):
         try:
             alumno = Alumno.objects.get(user=request.user)
         except Alumno.DoesNotExist:
-            print(f"No se encontró el alumno asociado al usuario {request.user.username}")
             mensaje = "No se encontró el alumno"
             return render(request, 'encuestar.html', {
                 'mensaje': mensaje,

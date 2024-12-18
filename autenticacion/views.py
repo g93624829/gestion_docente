@@ -55,7 +55,6 @@ def crear_cuenta(request):
     usuario = request.user  # Obtienes el usuario autenticado
     perfil_actual = get_object_or_404(MiPerfil, user=usuario)
     tipo_usuario_actual = perfil_actual.tipo_usuario
-    print(f'tipo_usuario_actual para crear cuenta: {tipo_usuario_actual}')
     
     if request.method == 'GET':
         return render(request, 'crear_cuenta.html', {
@@ -80,8 +79,7 @@ def crear_cuenta(request):
         
         # Validar DNI con RENIEC
         is_valid, nombre_lista_reniec = validate_dni(form_data['dni'])
-        print(f'is_valid: {is_valid}')
-        print(f'nombre_lista_reniec: {nombre_lista_reniec}')
+        
         if not is_valid:
             return render(request, 'crear_cuenta.html', {
                 'form': UserCreationForm(),
@@ -97,12 +95,8 @@ def crear_cuenta(request):
         # Tipo de Usuario = Alumno
         if form_data['tipo_usuario'] == "alumno(a)":
             correo_edu = f"{form_data['dni']}@certus.edu.pe"
-            print(f'correoedu: {correo_edu}')
-            print(f'correo: {form_data["email"]}')
             carrera_codigo = request.POST.get('carrera')
-            print(f"prueba carrera: {carrera_codigo}")
             carrera = get_object_or_404(Carrera, codigo_carrera=carrera_codigo)
-            print(f"prueba carrera: {carrera}")
             
             # Validaciones de formulario
             errors = []
@@ -179,10 +173,7 @@ def crear_cuenta(request):
         # Tipo de Usuario = Profesor
         elif form_data['tipo_usuario'] == "profesor(a)":
             correo_edu = f"{nombres_reniec[0]}{apellido_paterno}{apellido_materno[0]}@certus.edu.pe"
-            print(f'correoedu: {correo_edu}')
-            print(f'correo: {form_data["email"]}')
             cursos_codigos = request.POST.getlist('cursos[]')
-            print(f"prueba curso: {cursos_codigos}")
             
             # Validaciones de formulario
             errors = []
@@ -239,7 +230,6 @@ def crear_cuenta(request):
                 # Asignar cursos al profesor
                 cursos_codigos = request.POST.getlist('cursos[]')
                 cursos = Curso.objects.filter(codigo_curso__in=cursos_codigos)
-                print(f'cursos de asignacion prueba: {cursos}')
                 profesor.cursos.set(cursos)
 
                 # Iniciar sesión y redirigir
@@ -265,10 +255,7 @@ def crear_cuenta(request):
         # Tipo de Usuario = Supervisor
         elif form_data['tipo_usuario'] == "supervisor(a)":
             correo_edu = f"{nombres_reniec[0]}{apellido_paterno}{apellido_materno[0]}@certus.edu.pe"
-            print(f'correoedu: {correo_edu}')
-            print(f'correo: {form_data["email"]}')
             cursos_codigos = request.POST.getlist('cursos[]')
-            print(f"prueba curso: {cursos_codigos}")
             
             # Validaciones de formulario
             errors = []
@@ -486,9 +473,7 @@ def perfil_usuario(request, user_id):
             
             
             if request.method == 'POST':
-                print(f'prueba del POST')
                 retroalimentacion = request.POST.get('retroalimentacion')
-                print(f'Retroalimentacion: {retroalimentacion}')
 
                 # Obtener al profesor asociado a este usuario
                 profesor = get_object_or_404(Profesor, user=usuario)

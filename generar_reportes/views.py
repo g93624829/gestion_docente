@@ -120,11 +120,7 @@ def generar_reporte_docente(request):
     usuario = request.user
     perfil_actual = get_object_or_404(MiPerfil, user=usuario)
     tipo_usuario_actual = perfil_actual.tipo_usuario
-    print(f'tipo_usuario_actual para reporte docente: {tipo_usuario_actual}')
-
     profesores = Profesor.objects.prefetch_related('cursos').all()
-    
-    print(request.POST)
     
     if request.method == 'GET':
         return render(request, 'reporte_docente.html', {
@@ -171,8 +167,6 @@ def generar_reporte_docente(request):
             'pregunta_14': re.sub(r'_\d+|_', '', request.POST.get('pregunta_14', '')).upper(),
             'pregunta_15': re.sub(r'_\d+|_', '', request.POST.get('pregunta_15', '')).upper(),
         }
-        
-        print(f'datos_reporte: {datos_reporte}')
 
         # Generar el archivo PDF
         html_string = render_to_string('plantilla_reporte_docente.html', datos_reporte)
